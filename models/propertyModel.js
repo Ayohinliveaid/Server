@@ -23,7 +23,7 @@ const requestPropertyInfo = () => {
 
 
 
-const requestPropertyRates = async () => {
+const requestRealtyAPI = async () => {
     try {
         const options = {
             method: 'GET',
@@ -45,4 +45,4 @@ const requestPropertyRates = async () => {
 
 
 
-module.exports = { requestPropertyInfo, requestPropertyRates };
+module.exports = { requestPropertyInfo, requestRealtyAPI };

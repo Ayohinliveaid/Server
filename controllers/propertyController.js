@@ -11,7 +11,7 @@ const getProperty = async (req, res) => {
 
 const getData = async (req, res) => {
     try {
-        const data = await propertyModel.requestPropertyRates();
+        const data = await propertyModel.requestRealtyAPI();
         return res.status(200).json({ data });
 
     } catch (err) {
