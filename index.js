@@ -24,13 +24,6 @@ app.post('/login', (req, res) => {
             }
         }
     })
-    // connection.query('select * from users', (err, rows) => {
-    //     if (err) {
-    //         console.log('登录失败', err);
-    //     } else {
-    //         res.send({ message: '用户列表', data: rows });
-    //     }
-    // })
 })
 app.listen(8000);
 
