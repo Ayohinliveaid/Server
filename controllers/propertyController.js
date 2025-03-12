@@ -1,7 +1,7 @@
 const propertyModel = require("../models/propertyModel")
 const getProperty = async (req, res) => {
     try {
-        const properties = await propertyModel.requestPropertyInfo();
+        const properties = await propertyModel.requestCatAPI();
         return res.status(200).json({ properties });
 
     } catch (error) {

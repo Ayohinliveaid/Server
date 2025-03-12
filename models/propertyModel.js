@@ -1,6 +1,6 @@
 //测试调用Cat信息API
 const axios = require('axios');
-const requestPropertyInfo = () => {
+const requestCatAPI = () => {
     return new Promise((resolve, reject) => {
         axios.get('https://api.thecatapi.com/v1/images/search?limit=3&mime_types=png', {
             headers: {
@@ -45,4 +45,4 @@ const requestRealtyAPI = async () => {
 
 
 
-module.exports = { requestPropertyInfo, requestRealtyAPI };
+module.exports = { requestCatAPI, requestRealtyAPI };
