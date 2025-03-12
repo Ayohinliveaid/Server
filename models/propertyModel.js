@@ -1,4 +1,4 @@
-//调用房产信息API
+//测试调用Cat信息API
 const axios = require('axios');
 const requestPropertyInfo = () => {
     return new Promise((resolve, reject) => {
@@ -20,4 +20,29 @@ const requestPropertyInfo = () => {
     });
 };
 
-module.exports = { requestPropertyInfo };
+
+
+
+const requestPropertyRates = async () => {
+    try {
+        const options = {
+            method: 'GET',
+            url: 'https://realtor16.p.rapidapi.com/search/forrent/coordinates?latitude=29.27052&longitude=-95.74991&radius=30',
+            headers: {
+                'x-rapidapi-key': 'a545200318mshe35b1e4f95b4289p1a0053jsn086ecbe98a85',
+                'x-rapidapi-host': 'realtor16.p.rapidapi.com'
+            }
+        };
+
+        const response = await axios.request(options);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response ? error.response.data : 'API Request Failed');
+    }
+};
+
+
+
+
+
+module.exports = { requestPropertyInfo, requestPropertyRates };
