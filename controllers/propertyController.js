@@ -1,5 +1,5 @@
 const propertyModel = require("../models/propertyModel")
-const getProperty = async (req, res) => {
+const getCats = async (req, res) => {
     try {
         const properties = await propertyModel.requestCatAPI();
         return res.status(200).json({ properties });
@@ -8,6 +8,11 @@ const getProperty = async (req, res) => {
         return res.status(400).json({ err: error.message });
     }
 }
+
+
+
+
+
 
 const getData = async (req, res) => {
     try {
@@ -20,7 +25,7 @@ const getData = async (req, res) => {
             }
         })
         // return res.status(200).json({ list: newData });
-        return res.status(200).json({ data });
+        return res.status(200).json(data);
 
     } catch (err) {
         return res.status(400).json({ err: err.massage });
@@ -30,7 +35,7 @@ const getData = async (req, res) => {
 
 
 
-module.exports = { getProperty, getData }
+module.exports = { getCats, getData }
 
 
 
