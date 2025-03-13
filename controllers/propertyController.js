@@ -11,13 +11,23 @@ const getProperty = async (req, res) => {
 
 const getData = async (req, res) => {
     try {
-        const data = await propertyModel.requestRealtyAPI();
+        const data = await propertyModel.requestLocalJSON();
+        const newData = data.properties.map((v, i) => {
+            return {
+                j: v.location.address.coordinate.lon,
+                w: v.location.address.coordinate.lat,
+                t: v.list_price
+            }
+        })
+        // return res.status(200).json({ list: newData });
         return res.status(200).json({ data });
 
     } catch (err) {
         return res.status(400).json({ err: err.massage });
     }
 }
+
+
 
 
 module.exports = { getProperty, getData }

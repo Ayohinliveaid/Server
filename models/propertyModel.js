@@ -27,7 +27,7 @@ const requestRealtyAPI = async () => {
     try {
         const options = {
             method: 'GET',
-            url: 'https://realtor16.p.rapidapi.com/search/forrent/coordinates?latitude=29.27052&longitude=-95.74991&radius=30',
+            url: 'https://realtor16.p.rapidapi.com/search/forsale/coordinates?latitude=29.27052&longitude=-95.74991&radius=100',
             headers: {
                 'x-rapidapi-key': 'a545200318mshe35b1e4f95b4289p1a0053jsn086ecbe98a85',
                 'x-rapidapi-host': 'realtor16.p.rapidapi.com'
@@ -41,8 +41,28 @@ const requestRealtyAPI = async () => {
     }
 };
 
+//暂时请求本地文件获取json数据，节约api
+const fs = require('fs');
+const path = '/Users/ZhengZhixiang/Desktop/realtyAPI.json'; // 替换为你的实际路径
+const requestLocalJSON = async () => {
+    try {
+        // 读取文件内容
+        const data = fs.readFileSync(path, 'utf8');
+
+        // 解析 JSON 数据
+        const parsedData = JSON.parse(data);
+        return parsedData;
+    } catch (err) {
+        throw new Error('读取文件失败:', err);
+    }
+}
 
 
 
 
-module.exports = { requestCatAPI, requestRealtyAPI };
+
+
+
+
+
+module.exports = { requestCatAPI, requestRealtyAPI, requestLocalJSON };
