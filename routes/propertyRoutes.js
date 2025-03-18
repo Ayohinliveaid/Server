@@ -3,6 +3,6 @@ const express = require('express');
 const propertyRouter = express.Router();
 
 propertyRouter.post('/getCats', propertyController.getCats);
-propertyRouter.get('/getData', propertyController.getData);
+propertyRouter.post('/getData', propertyController.getData);
 
 module.exports = propertyRouter;

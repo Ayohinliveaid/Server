@@ -155,7 +155,7 @@ const requestLocalJSON = async () => {
 
         // console.log(parsedData.properties[0])
 
-        console.log(search(parsedData.properties[0], 'lon'))
+        // console.log(search(parsedData.properties[0], 'lon'))
         return parsedData;
     } catch (err) {
         throw new Error(err);
