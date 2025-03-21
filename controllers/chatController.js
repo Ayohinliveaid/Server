@@ -38,6 +38,15 @@ const getChatHistroy = (req, res) => {
     })
 }
 
+const getSavedChats = (req, res) => {
+    chatModel.getSavedChats().then(rows => {
+        return res.status(200).json({ chats: rows })
+    }).catch((err) => {
+        return res.status(400).json({ err: err.message });
+
+    })
+}
 
 
-module.exports = { saveTheChat, updateChatHistory, getChatHistroy }
+
+module.exports = { saveTheChat, updateChatHistory, getChatHistroy,getSavedChats }

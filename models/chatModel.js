@@ -53,10 +53,25 @@ const updateSavedState = (chat) => {
 
 
 
-//查找对话历史状态，如果历史记录满十条，返回最早一条的id，如果没有，返回0；
+//查找对话历史状态
 const getChatHistory = () => {
     return new Promise((reslove, reject) => {
         connection.query('select * from chatHistory', (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                reslove(rows);
+            }
+        })
+
+    })
+
+}
+
+//查找保存列表
+const getSavedChats = () => {
+    return new Promise((reslove, reject) => {
+        connection.query('select * from savedChats', (err, rows) => {
             if (err) {
                 reject(err);
             } else {
@@ -85,4 +100,4 @@ const deleteChat = (id) => {
 
 }
 
-module.exports = { saveChatToChatHistory, saveChatToSavedChats, getChatHistory, deleteChat, updateSavedState }
+module.exports = { saveChatToChatHistory, saveChatToSavedChats, getChatHistory,getSavedChats, deleteChat, updateSavedState }
