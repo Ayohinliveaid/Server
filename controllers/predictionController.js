@@ -1,4 +1,4 @@
-const predictionModel = require("../models/predictionModel");
+const predictionModel = require("../models/prediction/predictionModel");
 
 //线性回归预测，返回输入数据和预测数据
 const linearRegressionPredict = (req, res) => {
