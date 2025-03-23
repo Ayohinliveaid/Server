@@ -10,6 +10,16 @@ predictionRouter.post(
   "/polynomialRegressionPredict",
   predictionController.polynomialRegressionPredict
 );
+predictionRouter.post(
+  "/bestFittingModelPredict",
+  predictionController.bestFittingModelPredict
+);
+
+predictionRouter.post(
+  "/testEvaluationModel",
+  predictionController.testEvaluationModel
+);
+
 // predictionRouter.post('/updatepredictionHistory', predictionController.updatepredictionHistory);
 // predictionRouter.post('/getpredictionHistroy', predictionController.getpredictionHistroy);
 // predictionRouter.post('/getSavedpredictions', predictionController.getSavedpredictions);
