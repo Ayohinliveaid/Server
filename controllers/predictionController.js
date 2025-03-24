@@ -86,19 +86,21 @@ const ARIMAPredict = (req, res) => {
   } else {
     const func = predictionModel.ARIMAFunction(data, n);
     //返回和data的{x,y}相同的格式
-    const pridictedArr = func(n);
+    const pridictedArr = func(n)[0];
     const newData = predictionModel.arrConcatenatedData(data, pridictedArr);
-    return res.status(200).json(pridictedArr);
+    return res.status(200).json(newData);
   }
 };
 
 // 输入要预测的数组n，其中包括要预测的元素，可以是多维数组
 const BPNetworkPredict = async (req, res) => {
   const { data, n } = req.body; //n是要预测的数组，也就是x的数组
-  if (data.length === 0 || n.length === 0) {
-    return res.status(400).json("controller收到的参数存在非数组，引发错误");
+  if (!Array.isArray(n)) {
+    return res.status(400).json("controller收到的参数n非数组，引发错误");
+  } else if (data.length === 0 || n.length === 0) {
+    return res.status(400).json("controller收到的参数存在空数组，引发错误");
   } else {
-    const func = await predictionModel.BPNetworkFunction(data, 400, 10);
+    const func = await predictionModel.BPNetworkFunction(data, 500, 10);
     //返回和data的{x,y}相同的格式
     const pridictedArr = await func(n);
     const newData = predictionModel.arrConcatenatedData(data, pridictedArr, n);

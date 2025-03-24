@@ -73,7 +73,7 @@ const ARIMAFunction = (data) => {
   arima.fit(data);
 
   return (n) => {
-    //输入要预测的数量，
+    //输入要预测的数量n
     const predictedArr = arima.predict(n);
     return predictedArr;
   };
@@ -122,10 +122,18 @@ const denormalizedObject = (normalizedTensor, min, max) => {
   return denormalizedResult.arraySync().flat();
 };
 //反向传播机器学习模型，输入数据，返回预测函数
-const BPNetworkFunction = async (data, epochs = 100, hiddenUnits = 100) => {
+const BPNetworkFunction = async (
+  data,
+  epochs = 100,
+  hiddenUnits = 100,
+  degree = 3
+) => {
   //对数据进行处理，转化为张量并归一化
   const xArr = data.map((v) => v.x);
   const yArr = data.map((v) => v.y);
+
+  // const polyXArr = polynomialFeatures(xArr, degree); // 生成 x, x^2, x^3
+
   const {
     normalizedResult: normalizedInputs,
     min: inputMin,
@@ -142,12 +150,13 @@ const BPNetworkFunction = async (data, epochs = 100, hiddenUnits = 100) => {
   model.add(
     tf.layers.dense({
       inputShape: [xArr[0].length || 1],
+      // inputShape: [degree],
       units: hiddenUnits,
-      activation: "tanh",
+      activation: "sigmoid",
     })
   );
-  model.add(tf.layers.dense({ units: hiddenUnits, activation: "tanh" }));
-  model.add(tf.layers.dense({ units: 1, activation: "linear" })); // 线性回归任务，使用 linear 激活
+  model.add(tf.layers.dense({ units: hiddenUnits, activation: "sigmoid" }));
+  model.add(tf.layers.dense({ units: 1, activation: "sigmoid" })); // 线性回归任务，使用 linear 激活
 
   // 编译模型
   model.compile({
@@ -167,6 +176,7 @@ const BPNetworkFunction = async (data, epochs = 100, hiddenUnits = 100) => {
   });
 
   const func = (inputArr) => {
+    // const polyInputArr = polynomialFeatures(inputArr, degree);
     //记住预测阶段，归一化都要根据训练阶段的缩放比例
     const normalizedInput = normalizedTensor(
       inputArr,
@@ -185,12 +195,12 @@ const BPNetworkFunction = async (data, epochs = 100, hiddenUnits = 100) => {
   return func;
 };
 
-//BP神经网络添加多项式回归
-const polynomialFeatures = (xArr, degree) => {
-  return xArr.map((x) => {
-    return Array.from({ length: degree }, (_, i) => Math.pow(x, i + 1));
-  });
-};
+// //BP神经网络添加多项式回归
+// const polynomialFeatures = (xArr, degree) => {
+//   return xArr.map((x) => {
+//     return Array.from({ length: degree }, (_, i) => Math.pow(x, i + 1));
+//   });
+// };
 
 module.exports = {
   linearRegressionFunction,
