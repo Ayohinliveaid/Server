@@ -84,15 +84,25 @@ const ARIMAPredict = (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const func = predictionModel.polynomialRegressionFunction(data, n);
+    const func = predictionModel.ARIMAFunction(data, n);
     //返回和data的{x,y}相同的格式
     const pridictedArr = func(n);
-    const avarageGap =
-      data.reduce((sum, v, i) => data[i + 1] - data[i] + sum, 0) / data.length;
+    const newData = predictionModel.arrConcatenatedData(data, pridictedArr);
+    return res.status(200).json(pridictedArr);
+  }
+};
 
-    data.concat(func(n));
-
-    return res.status(200).json(data);
+// 输入要预测的数组n，其中包括要预测的元素，可以是多维数组
+const BPNetworkPredict = async (req, res) => {
+  const { data, n } = req.body; //n是要预测的数组，也就是x的数组
+  if (data.length === 0 || n.length === 0) {
+    return res.status(400).json("controller收到的参数存在非数组，引发错误");
+  } else {
+    const func = await predictionModel.BPNetworkFunction(data, 400, 10);
+    //返回和data的{x,y}相同的格式
+    const pridictedArr = await func(n);
+    const newData = predictionModel.arrConcatenatedData(data, pridictedArr, n);
+    return res.status(200).json(newData);
   }
 };
 
@@ -102,4 +112,5 @@ module.exports = {
   bestFittingModelPredict,
   testEvaluationModel,
   ARIMAPredict,
+  BPNetworkPredict,
 };

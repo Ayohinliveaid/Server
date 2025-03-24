@@ -20,6 +20,13 @@ predictionRouter.post(
   predictionController.testEvaluationModel
 );
 
+predictionRouter.post("/ARIMAPredict", predictionController.ARIMAPredict);
+
+predictionRouter.post(
+  "/BPNetworkPredict",
+  predictionController.BPNetworkPredict
+);
+
 // predictionRouter.post('/updatepredictionHistory', predictionController.updatepredictionHistory);
 // predictionRouter.post('/getpredictionHistroy', predictionController.getpredictionHistroy);
 // predictionRouter.post('/getSavedpredictions', predictionController.getSavedpredictions);
