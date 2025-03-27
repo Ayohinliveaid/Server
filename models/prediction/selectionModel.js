@@ -32,7 +32,7 @@ const bestFittingModel = (data) => {
     );
   });
 
-  //选出最好的模型
+  //选出最好的模型，目前仅仅从多项式回归选择，也就是仅仅选择多项式项数
   const bestPredictionModel = predictionModelList.reduce((model, v, i) => {
     return model.fittingDegree > v.fittingDegree
       ? model
@@ -41,4 +41,67 @@ const bestFittingModel = (data) => {
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
 
-module.exports = { bestFittingModel };
+//自动选择时间序列预测ARIMA的参数，包括pdq，返回最佳模型
+const optimizedARIMAModel = (data) => {
+  //p,d,q的范围，生成参数列表
+  const pRange = [1, 2, 3, 4];
+  const dRange = [0, 1, 3];
+  const qRange = [1, 2, 3, 4];
+  const paramList = [];
+  for (let i = 0; i < pRange.length; i++) {
+    for (let j = 0; j < dRange.length; j++) {
+      for (let k = 0; k < qRange.length; k++) {
+        paramList.push({ p: pRange[i], d: dRange[j], q: qRange[k] });
+      }
+    }
+  }
+  console.log("paramList", paramList);
+
+  let passedNumber = 10; //训练数据中前几个不拟合的数据的数量
+
+  // 生成一个ARIMA模型对象的队列，分别评估每一个，返回最好的那一个
+  //预测方法对象，包括多项式项数，具体的预测函数，原数据，生成的拟合数据，获得的分数，生成一个预测方法对象的数组，来保存
+  //输入的数据都是xy对象数组
+  const ARIMAModelList = paramList.map((v, i) => {
+    return {
+      params: v,
+      func: predictionModel.ARIMAFunction(data, v.p, v.d, v.q).func,
+      model: predictionModel.ARIMAFunction(data, v.p, v.d, v.q).model,
+      data: data,
+      fittedData: [],
+      fittingDegree: null,
+    };
+  });
+  //生成拟合数据和拟合度指标，每一个模型，通过部分输入训练数据，预测下一个没有输入的训练数据，并将训练数据逐个增加，进而实现对训练数据的拟合
+  ARIMAModelList.forEach((v, i) => {
+    v.data.sort((v1, v2) => v1.x - v2.x);
+    //v表示每一个模型，也就是上面的对象
+    v.data.forEach((value, i) => {
+      if (i < passedNumber) return; //前几个不预测
+      v.model.fit(v.data.slice(0, i).map((v) => v.y));
+      v.fittedData.push({
+        x: v.data[i].x,
+        y: Number(v.model.predict(1)[0][0]),
+      });
+    });
+
+    v.fittingDegree = evaluationModel.fittingDegree(
+      v.data.slice(passedNumber, v.data.length),
+      v.fittedData,
+      v.params.p + v.params.d + v.params.q //通过求和的方式确定参数的复杂程度，也可以改进为加权
+    );
+    // console.log("fittingDegree", v.fittingDegree);
+
+    //最后训练总数据，和前面的子数据叠加，进一步优化参数
+    v.model.fit(v.data.map((value) => value.y));
+  });
+
+  //选出最好的模型，目前仅仅从多项式回归选择，也就是仅仅选择多项式项数
+  const bestPredictionModel = ARIMAModelList.reduce((model, v, i) => {
+    return model.fittingDegree > v.fittingDegree ? model : ARIMAModelList[i];
+  }, ARIMAModelList[0]);
+
+  return ARIMAModelList; //此处返回预测模型，便于查看选择结果
+};
+
+module.exports = { bestFittingModel, optimizedARIMAModel };

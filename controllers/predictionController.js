@@ -84,14 +84,31 @@ const ARIMAPredict = (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const func = predictionModel.ARIMAFunction(data, n);
+    const func = predictionModel.ARIMAFunction(data).func;
+    const stationary = predictionModel.ARIMAFunction(data).stationary;
     //返回和data的{x,y}相同的格式
-    const pridictedArr = func(n)[0];
+    const pridictedArr = func(n)[0]; //第一个是预测结果，第二个是误差
     const newData = predictionModel.arrConcatenatedData(data, pridictedArr);
-    return res.status(200).json(newData);
+    return res.status(200).json({ stationary });
   }
 };
 
+//ARMIA时间序列预测
+const optimizedARIMAPredict = (req, res) => {
+  const { data, n } = req.body; //n是要预测的数组，也就是x的数组
+  if (data.length === 0) {
+    return res.status(400).json("controller收到的参数存在非数组，引发错误");
+  } else {
+    // const func = selectionModel.optimizedARIMAModel(data).func;
+    const list = selectionModel.optimizedARIMAModel(data);
+    //返回和data的{x,y}相同的格式
+    // const pridictedArr = func(n)[0]; //第一个是预测结果，第二个是误差
+    // const newData = predictionModel.arrConcatenatedData(data, pridictedArr);
+    return res.status(200).json(list);
+  }
+};
+
+// 神经网络
 // 输入要预测的数组n，其中包括要预测的元素，可以是多维数组
 const BPNetworkPredict = async (req, res) => {
   const { data, n } = req.body; //n是要预测的数组，也就是x的数组
@@ -100,10 +117,25 @@ const BPNetworkPredict = async (req, res) => {
   } else if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在空数组，引发错误");
   } else {
-    const func = await predictionModel.BPNetworkFunction(data, 500, 10);
+    const func = await predictionModel.BPNetworkFunction(data, 200, 100);
     //返回和data的{x,y}相同的格式
     const pridictedArr = await func(n);
     const newData = predictionModel.arrConcatenatedData(data, pridictedArr, n);
+    return res.status(200).json(newData);
+  }
+};
+
+//支持向量回归，输入要预测数组，返回xy对象数组
+const SVMRegressionPredict = async (req, res) => {
+  let { data, n } = req.body; //n是要预测的数组，也就是x的数组
+  if (data.length === 0 || n.length === 0) {
+    return res.status(400).json("controller收到的参数存在非数组，引发错误");
+  } else {
+    const SVMRegression = predictionModel.SVMRegression(data);
+    const func = SVMRegression.func;
+    const pridictedArr = await func(n);
+    const newData = predictionModel.arrConcatenatedData(data, pridictedArr, n);
+    SVMRegression.free();
     return res.status(200).json(newData);
   }
 };
@@ -114,5 +146,7 @@ module.exports = {
   bestFittingModelPredict,
   testEvaluationModel,
   ARIMAPredict,
+  optimizedARIMAPredict,
   BPNetworkPredict,
+  SVMRegressionPredict,
 };

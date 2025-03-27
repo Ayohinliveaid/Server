@@ -23,8 +23,18 @@ predictionRouter.post(
 predictionRouter.post("/ARIMAPredict", predictionController.ARIMAPredict);
 
 predictionRouter.post(
+  "/optimizedARIMAPredict",
+  predictionController.optimizedARIMAPredict
+);
+
+predictionRouter.post(
   "/BPNetworkPredict",
   predictionController.BPNetworkPredict
+);
+
+predictionRouter.post(
+  "/SVMRegressionPredict",
+  predictionController.SVMRegressionPredict
 );
 
 // predictionRouter.post('/updatepredictionHistory', predictionController.updatepredictionHistory);

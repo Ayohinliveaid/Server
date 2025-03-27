@@ -1,5 +1,6 @@
 const userRoutes = require("./routes/userRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
+const AIRoutes = require("./routes/AIRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const predictionRoutes = require("./routes/predictionRoutes");
 const cors = require("cors");
@@ -14,6 +15,7 @@ app.use("/user", userRoutes);
 app.use("/property", propertyRoutes);
 app.use("/chat", chatRoutes);
 app.use("/prediction", predictionRoutes);
+app.use("/AI", AIRoutes);
 
 app.listen(8000);
 

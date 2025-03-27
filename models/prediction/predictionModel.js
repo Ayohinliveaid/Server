@@ -2,6 +2,7 @@
 const math = require("mathjs");
 const ARIMA = require("arima");
 const tf = require("@tensorflow/tfjs");
+const SVM = require("libsvm-js/asm");
 // import * as tf from "@tensorflow/tfjs-node";
 
 //一元的线性回归模型，用公式计算最小二乘法函数。返回预测函数。
@@ -59,23 +60,37 @@ const polynomialRegressionFunction = (data, degree) => {
   };
 };
 
-// ARIMA自回归积分移动平均模型，返回的函数中，输入预测数量n，输出接下来的n的预测的数组，需要输入x为等间隔的数据，表述y在时间上均匀分布
-const ARIMAFunction = (data) => {
+// 时间序列预测，ARIMA自回归积分移动平均模型，返回的函数中，输入预测数量n，输出接下来的n的预测的数组，需要输入x为等间隔的数据，表述y在时间上均匀分布
+const ARIMAFunction = (data, p = 4, d = 4, q = 2) => {
+  let ARIMALog;
+  let stationary = true;
+
   const arima = new ARIMA({
-    p: 4, // 自回归项的阶数
-    d: 2, // 差分阶数
-    q: 2, // 移动平均项的阶数
+    p, // 自回归项的阶数
+    d, // 差分阶数
+    q, // 移动平均项的阶数
+    verbose: false, // 关闭详细日志
     // auto: true,
   });
   //数据处理，排序，生成时间序列
   data.sort((v1, v2) => v1.x - v2.x);
   data = data.map((v) => v.y);
-  arima.fit(data);
 
-  return (n) => {
-    //输入要预测的数量n
-    const predictedArr = arima.predict(n);
-    return predictedArr;
+  //训练模型并获取输出，判断是否稳定
+  ARIMALog = JSON.stringify(arima.fit(data));
+  // console.log("ARIMALog", ARIMALog, "ARIMALogEnd");
+  if (ARIMALog.indexOf("non-stationary AR part") != -1) {
+    stationary = false;
+  }
+  // console.log(ARIMALog);
+  return {
+    func: (n) => {
+      //输入要预测的数量n
+      const predictedArr = arima.predict(n);
+      return predictedArr;
+    },
+    model: arima,
+    stationary,
   };
 };
 
@@ -105,7 +120,7 @@ const arrConcatenatedData = (data, arr, n = null) => {
   return newData;
 };
 
-// 将数组转为归一化的张量
+// 将数组转为归一化的张量，输入二维数组或者一维数组
 const normalizedTensor = (arr, min = null, max = null) => {
   const tensor = tf.tensor2d(arr, [arr.length, arr[0].length || 1]);
   if (min && max) {
@@ -116,10 +131,35 @@ const normalizedTensor = (arr, min = null, max = null) => {
   const normalizedResult = tensor.sub(min).div(max.sub(min));
   return { normalizedResult, max, min };
 };
+//不转化为张量，直接归一化
+const normalizedObject = (arr, min = null, max = null) => {
+  // 计算 min 和 max，如果没有提供的话
+  if (min === null || max === null) {
+    min = Math.min(...arr.flat());
+    max = Math.max(...arr.flat());
+  }
 
-const denormalizedObject = (normalizedTensor, min, max) => {
-  const denormalizedResult = normalizedTensor.mul(max.sub(min)).add(min);
-  return denormalizedResult.arraySync().flat();
+  // 归一化： (x - min) / (max - min)
+  const normalizedResult = arr.map((value) => (value - min) / (max - min));
+  return { normalizedResult, max, min };
+};
+
+//将张量反归一化，返回一维数组
+const denormalizedObject = (normalizedObject, min, max) => {
+  // const denormalizedResult = normalizedObject.mul(max.sub(min)).add(min);
+  // return denormalizedResult.arraySync().flat();
+
+  // 情况1：输入是 TensorFlow 张量
+  if (normalizedObject instanceof tf.Tensor) {
+    const denormalizedResult = normalizedObject.mul(max.sub(min)).add(min);
+    return denormalizedResult.arraySync().flat();
+  }
+
+  // 情况2：输入是普通数组
+  if (Array.isArray(normalizedObject)) {
+    const range = max - min;
+    return normalizedObject.map((v) => v * range + min);
+  }
 };
 //反向传播机器学习模型，输入数据，返回预测函数
 const BPNetworkFunction = async (
@@ -131,6 +171,7 @@ const BPNetworkFunction = async (
   //对数据进行处理，转化为张量并归一化
   const xArr = data.map((v) => v.x);
   const yArr = data.map((v) => v.y);
+  console.log("xArr:", xArr);
 
   // const polyXArr = polynomialFeatures(xArr, degree); // 生成 x, x^2, x^3
 
@@ -152,10 +193,10 @@ const BPNetworkFunction = async (
       inputShape: [xArr[0].length || 1],
       // inputShape: [degree],
       units: hiddenUnits,
-      activation: "sigmoid",
+      activation: "tanh",
     })
   );
-  model.add(tf.layers.dense({ units: hiddenUnits, activation: "sigmoid" }));
+  model.add(tf.layers.dense({ units: hiddenUnits, activation: "tanh" }));
   model.add(tf.layers.dense({ units: 1, activation: "sigmoid" })); // 线性回归任务，使用 linear 激活
 
   // 编译模型
@@ -202,10 +243,66 @@ const BPNetworkFunction = async (
 //   });
 // };
 
+//支持向量机回归模型
+const SVMRegression = (data) => {
+  const xArr = data.map((v) => [v.x]);
+  console.log("xArr:", xArr);
+  const yArr = data.map((v) => v.y);
+  let {
+    normalizedResult: normalizedInputs,
+    min: inputMin,
+    max: inputMax,
+  } = normalizedObject(xArr);
+  normalizedInputs = normalizedInputs.map((v) => [v]);
+  const {
+    normalizedResult: normalizedOutputs,
+    min: outputMin,
+    max: outputMax,
+  } = normalizedObject(yArr);
+
+  const svm = new SVM({
+    type: SVM.SVM_TYPES.EPSILON_SVR,
+    kernel: SVM.KERNEL_TYPES.RBF,
+    cost: 1.0, // 降低 C 值
+    epsilon: 0.0001, // 根据 y 的尺度调整
+    gamma: 10, // 降低 gamma
+  });
+  svm.train(normalizedInputs, normalizedOutputs);
+  console.log(
+    "训练数据input",
+    normalizedInputs,
+    "训练数据output",
+    normalizedOutputs
+  );
+
+  return {
+    func: (inputArr) => {
+      //按照svm要求，将一维元素数组转化为向量数组
+      if (!Array.isArray(inputArr[0])) {
+        inputArr = inputArr.map((v) => [v]);
+      }
+      const normalizedInput = normalizedObject(
+        inputArr,
+        inputMin,
+        inputMax
+      ).normalizedResult.map((v) => [v]);
+      const predictedResult = svm.predict(normalizedInput);
+      const denormalizedResult = denormalizedObject(
+        predictedResult,
+        outputMin,
+        outputMax
+      );
+      return denormalizedResult;
+    },
+    free: () => svm.free(), // 让外部决定何时释放
+  };
+};
+
 module.exports = {
   linearRegressionFunction,
   polynomialRegressionFunction,
   ARIMAFunction,
   arrConcatenatedData,
   BPNetworkFunction,
+  SVMRegression,
 };

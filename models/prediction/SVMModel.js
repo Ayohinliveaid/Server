@@ -20,5 +20,7 @@ const svm = new SVM({
 svm.train(X, y);
 
 // 训练完成后进行预测
-const prediction = svm.predict([[9]]);
+const prediction = svm.predict([[100]]);
 console.log("预测值:", prediction); // 输出预测值
+
+svm.free();
