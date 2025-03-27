@@ -1,11 +1,11 @@
 const AIController = require("../controllers/AIController");
-const authMiddleware = require("../middlewares/authMiddleware");
+const userMiddlewares = require("../middlewares/userMiddlewares");
 const express = require("express");
 const AIRouter = express.Router();
 
 AIRouter.post(
   "/requestConfig",
-  authMiddleware.authenticateToken,
+  userMiddlewares.authenticateToken,
   AIController.requestConfig
 );
 
