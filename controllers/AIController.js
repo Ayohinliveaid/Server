@@ -11,4 +11,15 @@ const requestConfig = async (req, res) => {
     });
 };
 
-module.exports = { requestConfig };
+const requestDescription = async (req, res) => {
+  const { data } = req.body;
+  AIModel.descriptionFromDS(data)
+    .then((description) => {
+      return res.status(200).json(description);
+    })
+    .catch((error) => {
+      return res.status(400).json({ err: error.message });
+    });
+};
+
+module.exports = { requestConfig,requestDescription };

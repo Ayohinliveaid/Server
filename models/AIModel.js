@@ -1,5 +1,6 @@
 const axios = require("axios");
 const OpenAI = require("openai");
+const removeMd = require('remove-markdown');
 // import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -51,8 +52,8 @@ const standardResponse = {
     search_radius: "0",
   },
 };
-//每次对话的上下文
-const messages = [
+//每次对话的上下文，包括角色和文字内容
+const messagesOfConfig = [
   {
     role: "system",
     content:
@@ -62,8 +63,22 @@ const messages = [
       JSON.stringify(standardResponse),
   },
 ];
+const messagesOfDescription = [
+  {
+    role: "system",
+    content:
+      "Describe the json data I provided in standard Mandarin Chinese",
+  },
+];
 
-//处理自然语言，生成房产API查询参数，直接返回对象
+//处理自然语言，生成房产API查询参数，直接返回对象，作为房产API的参数
+// {
+//   "path": "/search/forrent",
+//   "params": {
+//       "location": "new york, ny",
+//       "search_radius": "0"
+//   }
+// }
 const configFromDS = (text) => {
   let params = [];
   const newMessages = {
@@ -73,7 +88,7 @@ const configFromDS = (text) => {
   return new Promise((resolve, reject) => {
     openai.chat.completions
       .create({
-        messages: [...messages, newMessages],
+        messages: [...messagesOfConfig, newMessages],
         model: "deepseek-chat",
         response_format: {
           type: "json_object",
@@ -123,9 +138,33 @@ const paramArrFromText = (text) => {
   });
 };
 
-//处理数据，生成自然语言
+//接受数据作为输入，输出对数据的描述。处理数据，生成自然语言。
+const descriptionFromDS = (data) => {
+  const newMessages = {
+    role: "user",
+    // content: JSON.stringify(data),
+    content: typeof data === "string" ? data : JSON.stringify(data), // Only stringify objects
+
+  };
+  return new Promise((resolve, reject) => {
+    openai.chat.completions
+      .create({
+        messages: [...messagesOfDescription,newMessages],
+        model: "deepseek-chat",
+      })
+      .then((completion) => {
+        resolve(removeMd(completion.choices[0].message.content));
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+
 
 module.exports = {
   paramArrFromText,
   configFromDS,
+  descriptionFromDS
 };

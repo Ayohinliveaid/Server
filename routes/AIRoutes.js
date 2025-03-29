@@ -5,8 +5,16 @@ const AIRouter = express.Router();
 
 AIRouter.post(
   "/requestConfig",
-  userMiddlewares.authenticateToken,
+  // userMiddlewares.authenticateToken,
   AIController.requestConfig
 );
+
+AIRouter.post(
+  "/requestDescription",
+  // userMiddlewares.authenticateToken,
+  AIController.requestDescription
+
+);
+
 
 module.exports = AIRouter;

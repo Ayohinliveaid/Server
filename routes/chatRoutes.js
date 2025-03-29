@@ -6,6 +6,6 @@ chatRouter.post("/saveTheChat", chatController.saveTheChat);
 chatRouter.post("/updateChatHistory", chatController.updateChatHistory);
 chatRouter.post("/getChatHistroy", chatController.getChatHistroy);
 chatRouter.post("/getSavedChats", chatController.getSavedChats);
-chatRouter.post("/getDataFromQuestion", chatController.getDataFromQuestion);
+chatRouter.post("/getResponse", chatController.getResponse);
 
 module.exports = chatRouter;

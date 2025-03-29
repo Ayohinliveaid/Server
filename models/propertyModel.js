@@ -42,9 +42,9 @@ const requestRealtorAPI = async (
       url: "https://realtor16.p.rapidapi.com" + config.path,
       params: config.params,
       headers: {
-        "x-rapidapi-key": "a545200318mshe35b1e4f95b4289p1a0053jsn086ecbe98a85",
-        "x-rapidapi-host": "realtor16.p.rapidapi.com",
-      },
+        'x-rapidapi-key': '1bb531fc35mshb5941983f2319bcp1883acjsncebdc4d31faa',
+        'x-rapidapi-host': 'realtor16.p.rapidapi.com'
+      }
     };
 
     const response = await axios.request(options);
