@@ -13,8 +13,12 @@ AIRouter.post(
   "/requestDescription",
   // userMiddlewares.authenticateToken,
   AIController.requestDescription
-
 );
 
+AIRouter.post(
+  "/requestDimension",
+  // userMiddlewares.authenticateToken,
+  AIController.requestDimension
+);
 
 module.exports = AIRouter;

@@ -8,11 +8,14 @@ const linearRegressionPredict = (req, res) => {
   if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组");
   } else {
-    const func = predictionModel.linearRegressionFunction(data);
+    const convertProps = predictionModel.convertProps(data);
+    let xyData = convertProps.xy();
+    const func = predictionModel.linearRegressionFunction(xyData);
     for (let v of n) {
-      data.push({ x: v, y: func(v) });
+      xyData.push({ x: v, y: func(v) });
     }
-    return res.status(200).json(data);
+    const originData = convertProps.origin(xyData);
+    return res.status(200).json(originData);
   }
 };
 
@@ -22,11 +25,14 @@ const polynomialRegressionPredict = (req, res) => {
   if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const func = predictionModel.polynomialRegressionFunction(data, degree);
+    const convertProps = predictionModel.convertProps(data);
+    let xyData = convertProps.xy();
+    const func = predictionModel.polynomialRegressionFunction(xyData, degree);
     for (let v of n) {
-      data.push({ x: v, y: func(v) });
+      xyData.push({ x: v, y: func(v) });
     }
-    return res.status(200).json(data);
+    const originData = convertProps.origin(xyData);
+    return res.status(200).json(originData);
   }
 };
 
@@ -36,12 +42,15 @@ const bestFittingModelPredict = (req, res) => {
   if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const bestFittingModel = selectionModel.bestFittingModel(data);
+    const convertProps = predictionModel.convertProps(data);
+    let xyData = convertProps.xy();
+    const bestFittingModel = selectionModel.bestFittingModel(xyData);
     const func = bestFittingModel.func;
     for (let v of n) {
-      data.push({ x: v, y: func(v) });
+      xyData.push({ x: v, y: func(v) });
     }
-    return res.status(200).json(data);
+    const originData = convertProps.origin(xyData);
+    return res.status(200).json(originData);
   }
 };
 
@@ -84,12 +93,15 @@ const ARIMAPredict = (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const func = predictionModel.ARIMAFunction(data).func;
-    const stationary = predictionModel.ARIMAFunction(data).stationary;
+    const convertProps = predictionModel.convertProps(data);
+    let xyData = convertProps.xy();
+    const func = predictionModel.ARIMAFunction(xyData).func;
+    // const stationary = predictionModel.ARIMAFunction(xyData).stationary;
     //返回和data的{x,y}相同的格式
     const pridictedArr = func(n)[0]; //第一个是预测结果，第二个是误差
-    const newData = predictionModel.arrConcatenatedData(data, pridictedArr);
-    return res.status(200).json({ stationary });
+    const newData = predictionModel.arrConcatenatedData(xyData, pridictedArr);
+    const originData = convertProps.origin(newData);
+    return res.status(200).json(originData);
   }
 };
 
@@ -99,12 +111,15 @@ const optimizedARIMAPredict = (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
+    const convertProps = predictionModel.convertProps(data);
+    let xyData = convertProps.xy();
     // const func = selectionModel.optimizedARIMAModel(data).func;
-    const list = selectionModel.optimizedARIMAModel(data);
+    const list = selectionModel.optimizedARIMAModel(xyData);
     //返回和data的{x,y}相同的格式
     // const pridictedArr = func(n)[0]; //第一个是预测结果，第二个是误差
-    // const newData = predictionModel.arrConcatenatedData(data, pridictedArr);
-    return res.status(200).json(list);
+    // const newData = predictionModel.arrConcatenatedData(xyData, pridictedArr);
+    const originData = convertProps.origin(newData);
+    return res.status(200).json(originData);
   }
 };
 
@@ -117,11 +132,18 @@ const BPNetworkPredict = async (req, res) => {
   } else if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在空数组，引发错误");
   } else {
-    const func = await predictionModel.BPNetworkFunction(data, 200, 100);
+    const convertProps = predictionModel.convertProps(data);
+    let xyData = convertProps.xy();
+    const func = await predictionModel.BPNetworkFunction(xyData, 200, 100);
     //返回和data的{x,y}相同的格式
     const pridictedArr = await func(n);
-    const newData = predictionModel.arrConcatenatedData(data, pridictedArr, n);
-    return res.status(200).json(newData);
+    const newData = predictionModel.arrConcatenatedData(
+      xyData,
+      pridictedArr,
+      n
+    );
+    const originData = convertProps.origin(newData);
+    return res.status(200).json(originData);
   }
 };
 
@@ -131,12 +153,19 @@ const SVMRegressionPredict = async (req, res) => {
   if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const SVMRegression = predictionModel.SVMRegression(data);
+    const convertProps = predictionModel.convertProps(data);
+    let xyData = convertProps.xy();
+    const SVMRegression = predictionModel.SVMRegression(xyData);
     const func = SVMRegression.func;
     const pridictedArr = await func(n);
-    const newData = predictionModel.arrConcatenatedData(data, pridictedArr, n);
+    const newData = predictionModel.arrConcatenatedData(
+      xyData,
+      pridictedArr,
+      n
+    );
     SVMRegression.free();
-    return res.status(200).json(newData);
+    const originData = convertProps.origin(newData);
+    return res.status(200).json(originData);
   }
 };
 

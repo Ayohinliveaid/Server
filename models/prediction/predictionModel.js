@@ -96,6 +96,7 @@ const ARIMAFunction = (data, p = 4, d = 4, q = 2) => {
 
 //将时间序列预测的数据转化格式，拼接到对象数组中
 const arrConcatenatedData = (data, arr, n = null) => {
+  data.sort((v1, v2) => v1.x - v2.x);
   let objectArr = [];
   if (Array.isArray(n)) {
     objectArr = arr.map((v, i) => {
@@ -117,7 +118,8 @@ const arrConcatenatedData = (data, arr, n = null) => {
   }
 
   const newData = data.concat(objectArr);
-  return newData;
+  const originData = convertProps(data).origin(newData);
+  return originData;
 };
 
 // 将数组转为归一化的张量，输入二维数组或者一维数组
@@ -298,6 +300,32 @@ const SVMRegression = (data) => {
   };
 };
 
+//处理数据，将属性转化为xy，再转化回原属性值，以便在各个预测函数中使用xy预测，但最后返回原始数据
+const convertProps = (data) => {
+  const xProp = Object.keys(data[0])[0];
+  const yProp = Object.keys(data[0])[1];
+  const xy = () => {
+    const xyResult = data.map((v) => {
+      return {
+        x: v[xProp],
+        y: v[yProp],
+      };
+    });
+    return xyResult;
+  };
+  const origin = (xyData) => {
+    const originResult = xyData.map((v) => {
+      return {
+        [xProp]: v.x,
+        [yProp]: v.y,
+      };
+    });
+    return originResult;
+  };
+
+  return { xy, origin }; //xy(),origin()即可得到对应数组
+};
+
 module.exports = {
   linearRegressionFunction,
   polynomialRegressionFunction,
@@ -305,4 +333,5 @@ module.exports = {
   arrConcatenatedData,
   BPNetworkFunction,
   SVMRegression,
+  convertProps,
 };

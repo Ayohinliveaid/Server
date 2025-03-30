@@ -1,6 +1,7 @@
 //测试调用Cat信息API
 const axios = require("axios");
 const fs = require("fs");
+const { constants } = require("http2");
 
 const requestCatAPI = () => {
   return new Promise((resolve, reject) => {
@@ -42,9 +43,9 @@ const requestRealtorAPI = async (
       url: "https://realtor16.p.rapidapi.com" + config.path,
       params: config.params,
       headers: {
-        'x-rapidapi-key': '1bb531fc35mshb5941983f2319bcp1883acjsncebdc4d31faa',
-        'x-rapidapi-host': 'realtor16.p.rapidapi.com'
-      }
+        "x-rapidapi-key": "1bb531fc35mshb5941983f2319bcp1883acjsncebdc4d31faa",
+        "x-rapidapi-host": "realtor16.p.rapidapi.com",
+      },
     };
 
     const response = await axios.request(options);
@@ -56,13 +57,88 @@ const requestRealtorAPI = async (
   }
 };
 
+//抽象出数据集的结构，首先简化数组，只保留第一个元素。使用广度优先算法。
+const simplifyObj = (obj) => {
+  let simplifiedObj = JSON.parse(JSON.stringify(obj));
+  if (Array.isArray(simplifiedObj)) {
+    simplifiedObj = simplifiedObj[0];
+  } //第一个数组只能通过此处消除
+
+  let queue = [simplifiedObj]; // 用队列来存储对象，首先将根对象入队
+  while (queue.length > 0) {
+    let current = queue.shift(); // 从队列中取出一个元素进行处理
+
+    // // 如果当前对象是数组，则将其中的第一个元素加入队列。如果元素是简单数据类型而不是对象，那么直接忽略
+    // if (Array.isArray(current)) {
+    //   if (typeof current[0] == "object") {
+    //     //只有数组的内容是对象，才简化数组，是值，则保留。
+    //     current.length = 1; // 直接修改原数组，只保留第一个元素
+    //     // current = current[0];
+    //     queue.push(...current); //第一个数组通过函数开头的语句消除
+    //   }
+    // }
+    // 如果当前对象是普通对象，则遍历它的键值对
+    if (typeof current === "object" && current !== null) {
+      const keys = Object.keys(current);
+      for (let v of keys) {
+        // queue.push(current[v]); // 将子加入队列
+        // console.log(v);
+        if (Array.isArray(current[v]) && typeof current[v][0] !== "object") {
+          // 如果是简单类型的数组，删除这个键，此位置仅对第二层元素有效，对obj是简单元素数组的情况无效，但现实中不存在obj是简单元素数组的情况。
+          delete current[v];
+        } else if (
+          Array.isArray(current[v]) &&
+          typeof current[v][0] == "object"
+        ) {
+          current[v] = current[v][0];
+          queue.push(current[v]); // 将子元素加入队列
+        } else {
+          queue.push(current[v]); // 将子元素加入队列
+        }
+      }
+    }
+  }
+  return simplifiedObj;
+};
+
+//将所有根部的属性列出来，组成一个字符串数组。输入一个对象，进行扁平化处理，再返回键名
+const flattenObject = (obj, parentKey = "") => {
+  let result = {};
+
+  for (const key in obj) {
+    const newKey = parentKey ? `${parentKey}.${key}` : key; // 拼接父键和当前键，使用点（.）作为分隔符
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      // 如果是对象且不是数组，递归调用
+      Object.assign(result, flattenObject(obj[key], newKey));
+    } else {
+      // 如果是简单值或数组，直接赋值
+      result[newKey] = obj[key];
+    }
+  }
+  return result;
+};
+//将数据化简成数据结构，并转化成层级属性的数组，嵌套了simplifyObj和flattenObject
+const getKeys = (obj) => {
+  const simplifiedObj = simplifyObj(obj);
+  const result = Object.keys(flattenObject(simplifiedObj));
+  return result;
+};
+
+//获取到AI返回的dimension后，拆解成字符串
+const getChildAndParent = (str) => {
+  const arr = str.split(".");
+  const child = arr[arr.length - 1];
+  const parent = arr[arr.length - 2] || arr[0];
+  return { child, parent };
+};
+
 //深度优先算法，输入对象和参数，输出参数值
 const DFS = (obj, key) => {
   const keys = Object.keys(obj);
   for (let v of keys) {
-    if (typeof obj[v] == "object" && obj[v] !== null) {
+    if (typeof obj[v] == "object" && obj[v] != null) {
       const result = DFS(obj[v], key);
-      if (result !== "haha") {
+      if (result != "haha") {
         return result;
       }
     } else {
@@ -73,31 +149,6 @@ const DFS = (obj, key) => {
   }
   return "haha";
 };
-// const DFS = (obj, key) => {
-//     if (Array.isArray(obj)) {
-//         for (let item of obj) {
-//             const result = DFS(item, key);
-//             if (result !== 'haha') {
-//                 return result;
-//             }
-//         }
-//     } else {
-//         const keys = Object.keys(obj);
-//         for (let v of keys) {
-//             if (typeof obj[v] === 'object' && obj[v] !== null) {
-//                 const result = DFS(obj[v], key);
-//                 if (result !== 'haha') {
-//                     return result;
-//                 }
-//             } else {
-//                 if (v === key) {
-//                     return obj[v];
-//                 }
-//             }
-//         }
-//     }
-//     return 'haha';
-// }
 
 const BFS = (obj, key) => {
   let queue = [obj]; // 用队列来存储对象，首先将根对象入队
@@ -110,34 +161,34 @@ const BFS = (obj, key) => {
     }
 
     // 如果当前对象是普通对象，则遍历它的键值对
-    if (typeof current === "object" && current !== null) {
+    if (typeof current == "object" && current !== null) {
       const keys = Object.keys(current);
       for (let v of keys) {
-        if (v === key) {
+        if (v == key) {
           return current[v]; // 找到目标键并返回其值
         }
         queue.push(current[v]); // 否则继续将其值加入队列
       }
     }
   }
-  return "Key not found"; // 如果队列遍历完还没找到，返回未找到信息
+  return `BFS ${key} not found`; // 如果队列遍历完还没找到，返回未找到信息
 };
 
 //先广度优先搜索，如果找到关键字，就深度优先搜索:address\location\ordinates
-const search = (obj, key) => {
+const search = (obj, key, parent = key) => {
   let queue = [obj]; // 用队列来存储对象，首先将根对象入队
   while (queue.length > 0) {
     const current = queue.shift(); // 从队列中取出一个元素进行处理
     // 如果当前对象是数组，则将其中的每一个元素加入队列
     if (Array.isArray(current)) {
       queue.push(...current);
-    } else if (typeof current === "object" && current !== null) {
+    } else if (typeof current == "object" && current != null) {
       // 如果当前对象是普通对象，则遍历它的键值对
       const keys = Object.keys(current);
       for (let v of keys) {
         if (v == key) {
           return current[v]; // 找到目标键并返回其值
-        } else if (v == "address" || v == "location" || v == "coordinate") {
+        } else if (v == parent) {
           return BFS(current[v], key);
         } else {
           queue.push(current[v]); // 否则继续将其值加入队列
@@ -148,10 +199,10 @@ const search = (obj, key) => {
   return null; // 如果队列遍历完还没找到，返回未找到信息
 };
 
-const path = "/Users/ZhengZhixiang/Desktop/realtorAPI.json"; // 替换为你的实际路径
 const requestLocalJSON = async () => {
   try {
     // 读取文件内容
+    const path = "/Users/ZhengZhixiang/Desktop/realtorAPI.json"; // 替换为你的实际路径
     const data = fs.readFileSync(path, "utf8");
 
     // 解析 JSON 数据
@@ -166,44 +217,59 @@ const requestLocalJSON = async () => {
   }
 };
 
-//接口请求到数据后，映射为xyz坐标，进而可以在antv中展示。参数表示xyz需要映射的元素
-const mappedData = (data, x, y, z = null) => {
+//接口请求到数据后，映射为xyz坐标，进而可以在antv中展示。参数表示xyz需要映射的元素，对应parent表示快速查找的父级元素名称
+const mappedData = (
+  data,
+  x,
+  y,
+  z = null,
+  xParent = x,
+  yParent = y,
+  zParent = z
+) => {
+  console.log(x, y, xParent, yParent);
   let mappedResult = [];
   if (z == null) {
     mappedResult = data.map((v) => {
       return {
-        x: search(v, x),
-        y: search(v, y),
+        [x]: search(v, x, xParent),//返回x的实际内容而不是'x'
+        [y]: search(v, y, yParent),
       };
     });
 
-    mappedResult = mappedResult.filter((v) => v.x != null && v.y != null);
+    // mappedResult = mappedResult.filter((v) => v.x != null && v.y != null);
+   
   } else {
     mappedResult = data.map((v) => {
       return {
-        x: search(v, x),
-        y: search(v, y),
-        z: search(v, z),
+        [x]: search(v, x, xParent),
+        [y]: search(v, y, yParent),
+        [z]: search(v, z, zParent),
       };
     });
-    mappedResult = mappedResult.filter(
-      (v) => v.x != null && v.y != null && v.z != null
-    );
+    // mappedResult = mappedResult.filter(
+    //   (v) => v.x != null && v.y != null && v.z != null
+    // );
   }
+  mappedResult.filter((v) =>
+    Object.values(v).every((value) => value != null)
+  );
 
   return mappedResult;
 };
-
-//映射算法，转化成antv框架可用的参数
 
 // requestLocalJSON();
 
 module.exports = {
   requestCatAPI,
   requestRealtorAPI,
+  simplifyObj,
+  getKeys,
+  flattenObject,
   requestLocalJSON,
   DFS,
   BFS,
   search,
   mappedData,
+  getChildAndParent,
 };

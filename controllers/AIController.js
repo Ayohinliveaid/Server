@@ -22,4 +22,15 @@ const requestDescription = async (req, res) => {
     });
 };
 
-module.exports = { requestConfig,requestDescription };
+const requestDimension = async (req, res) => {
+  const { list, question } = req.body;
+  AIModel.dimensionFromDS(list, question)
+    .then((dimension) => {
+      return res.status(200).json(dimension);
+    })
+    .catch((error) => {
+      return res.status(400).json({ err: error.message });
+    });
+};
+
+module.exports = { requestConfig, requestDescription, requestDimension };

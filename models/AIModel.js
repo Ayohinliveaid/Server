@@ -1,6 +1,6 @@
 const axios = require("axios");
 const OpenAI = require("openai");
-const removeMd = require('remove-markdown');
+const removeMd = require("remove-markdown");
 // import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -28,22 +28,7 @@ const paramList = [
     ],
   },
 ];
-//剩余参数
-const propertyParam = {
-  name: "property",
-  children: [
-    { name: "details", children: [null] },
-    { name: "photos", children: [null] },
-    { name: "estimates", children: [null] },
-    { name: "amenities_score", children: [null] },
-    { name: "similar_homes", children: [null] },
-    { name: "new_construction_similar_homes", children: [null] },
-    { name: "history", children: [null] },
-    { name: "environment_risk", children: [null] },
-    { name: "schools", children: [null] },
-    { name: "market_trends", children: [null] },
-  ],
-};
+//AI上下文
 //标注输出格式
 const standardResponse = {
   path: "/search/forsale",
@@ -51,6 +36,11 @@ const standardResponse = {
     location: "houston ,tx",
     search_radius: "0",
   },
+};
+//标注输出格式
+const standardDimension = {
+  x: "address.coordinates.lon",
+  y: "address.coordinates.lat",
 };
 //每次对话的上下文，包括角色和文字内容
 const messagesOfConfig = [
@@ -67,18 +57,20 @@ const messagesOfDescription = [
   {
     role: "system",
     content:
-      "Describe the json data I provided in standard Mandarin Chinese",
+      "Describe the json data of answer I provided in standard Mandarin Chinese, according to the question. Start with '该数据",
+  },
+];
+const messageOfDimension = [
+  {
+    role: "system",
+    content:
+      "Select the attribute names from the provided dataset’s property list based on the natural language question and map them to the X and Y axes in the Chart G2 visualization" +
+      ",only return JSON object like " +
+      JSON.stringify(standardDimension),
   },
 ];
 
-//处理自然语言，生成房产API查询参数，直接返回对象，作为房产API的参数
-// {
-//   "path": "/search/forrent",
-//   "params": {
-//       "location": "new york, ny",
-//       "search_radius": "0"
-//   }
-// }
+//向AI提问获取房地产API参数
 const configFromDS = (text) => {
   let params = [];
   const newMessages = {
@@ -103,53 +95,20 @@ const configFromDS = (text) => {
   });
 };
 
-//处理自然语言，生成房产API查询参数
-const paramArrFromText = (text) => {
-  let params = [];
-  const demand = "";
-
-  return new Promise((resolve, reject) => {
-    const options = {
-      method: "POST",
-      url: "https://chatgpt-42.p.rapidapi.com/chat",
-      headers: {
-        "x-rapidapi-key": "a545200318mshe35b1e4f95b4289p1a0053jsn086ecbe98a85",
-        "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
-        "Content-Type": "application/json",
-      },
-      data: {
-        messages: [
-          {
-            role: "user",
-            content: text,
-          },
-        ],
-        model: "gpt-4o-mini",
-      },
-    };
-    axios
-      .request(options)
-      .then((response) => {
-        resolve(response.data.choices[0].message.content);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-};
-
-//接受数据作为输入，输出对数据的描述。处理数据，生成自然语言。
-const descriptionFromDS = (data) => {
-  const newMessages = {
+//向AI提问货物数据描述。接受数据作为输入，输出对数据的描述。处理数据，生成自然语言。
+const descriptionFromDS = (data, question) => {
+  const dataMessages = {
     role: "user",
-    // content: JSON.stringify(data),
     content: typeof data === "string" ? data : JSON.stringify(data), // Only stringify objects
-
+  };
+  const questionMessages = {
+    role: "user",
+    content: question, // Only stringify objects
   };
   return new Promise((resolve, reject) => {
     openai.chat.completions
       .create({
-        messages: [...messagesOfDescription,newMessages],
+        messages: [...messagesOfDescription, dataMessages, questionMessages],
         model: "deepseek-chat",
       })
       .then((completion) => {
@@ -161,10 +120,34 @@ const descriptionFromDS = (data) => {
   });
 };
 
-
+//接受数据作为输入，输出对数据的描述。处理数据，生成自然语言。
+const dimensionFromDS = (list, question) => {
+  const newMessages = {
+    role: "user",
+    // content: JSON.stringify(data),
+    // content: typeof question === "string" ? data : JSON.stringify(data), // Only stringify objects
+    content: question + JSON.stringify(list),
+  };
+  return new Promise((resolve, reject) => {
+    openai.chat.completions
+      .create({
+        messages: [...messageOfDimension, newMessages],
+        model: "deepseek-chat",
+        response_format: {
+          type: "json_object",
+        },
+      })
+      .then((completion) => {
+        resolve(JSON.parse(completion.choices[0].message.content));
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
 
 module.exports = {
-  paramArrFromText,
   configFromDS,
-  descriptionFromDS
+  descriptionFromDS,
+  dimensionFromDS,
 };
