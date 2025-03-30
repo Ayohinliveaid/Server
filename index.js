@@ -7,7 +7,13 @@ const cors = require("cors");
 
 const express = require("express");
 const app = express();
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // 允许前端域名
+    credentials: true, // 允许携带 cookie
+  })
+);
 app.use(express.json());
 
 // 用户相关路由

@@ -38,11 +38,10 @@ const addUser = (phoneNumber, password) => {
 };
 
 const SECRET_KEY = "your-secret-key";
-// 生成 Token
+// 生成 Token，存储用户phoneNumber信息作为user_id
 function generateToken(user) {
   const payload = {
     phoneNumber: user.phoneNumber,
-    password: user.password,
   };
   return jwt.sign(payload, SECRET_KEY, { expiresIn: "2h" }); // 设置过期时间
 }

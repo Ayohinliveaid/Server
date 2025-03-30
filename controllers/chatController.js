@@ -4,8 +4,8 @@ const propertyModel = require("../models/propertyModel");
 
 const saveTheChat = async (req, res) => {
   try {
-    const { chat } = req.body;
-    await chatModel.saveChatToSavedChats(chat);
+    const { chat, user } = req.body;
+    await chatModel.saveChatToSavedChats(chat, user);
     await chatModel.updateSavedState(chat);
     return res.status(200).json({ message: "保存成功" });
   } catch (err) {
@@ -16,12 +16,12 @@ const saveTheChat = async (req, res) => {
 //更新历史记录，超出则删除，保持十条
 const updateChatHistory = async (req, res) => {
   try {
-    const rows = await chatModel.getChatHistory();
+    const { chat, user } = req.body;
+    const rows = await chatModel.getChatHistory(user);
     if (rows.length >= 10) {
       await chatModel.deleteChat(rows[0].id);
     }
-    const { chat } = req.body;
-    await chatModel.saveChatToChatHistory(chat);
+    await chatModel.saveChatToChatHistory(chat, user);
     return res.status(200).json({ message: "更新成功" });
   } catch (err) {
     return res.status(400).json({ err: err.message });
@@ -29,8 +29,9 @@ const updateChatHistory = async (req, res) => {
 };
 
 const getChatHistroy = (req, res) => {
+  const { user } = req.body;
   chatModel
-    .getChatHistory()
+    .getChatHistory(user)
     .then((rows) => {
       return res.status(200).json({ chats: rows });
     })
@@ -40,8 +41,9 @@ const getChatHistroy = (req, res) => {
 };
 
 const getSavedChats = (req, res) => {
+  const { user } = req.body;
   chatModel
-    .getSavedChats()
+    .getSavedChats(user)
     .then((rows) => {
       return res.status(200).json({ chats: rows });
     })
@@ -61,7 +63,7 @@ const getResponse = async (req, res) => {
 
     // //构造房产API的路由并请求获得房产信息
     // const data = await propertyModel.requestRealtorAPI(config);
-    const data = await propertyModel.requestLocalJSON(config);//节约API，暂时使用本地休斯顿出租房产数据
+    const data = await propertyModel.requestLocalJSON(config); //节约API，暂时使用本地休斯顿出租房产数据
     const properties = data.properties;
     // console.log("data", data, "data");
 
@@ -87,7 +89,7 @@ const getResponse = async (req, res) => {
     console.log("mappedData", mappedData);
 
     //调用AI描述接口，对房产信息进行描述
-    const description = await AIModel.descriptionFromDS(mappedData,question);
+    const description = await AIModel.descriptionFromDS(mappedData, question);
     console.log("description", description);
 
     // const mappedData = [
@@ -295,7 +297,9 @@ const getResponse = async (req, res) => {
     // const description =
     //   "这是一个包含12个数据点的JSON数组，每个数据点由x和y两个属性组成。具体描述如下： 当x=1时，y=105 当x=2时，y=107 当x=3时，y=110 当x=4时，y=108 当x=5时，y=115 当x=6时，y=120 当x=7时，y=118 当x=8时，y=125 当x=9时，y=130 当x=10时，y=128 当x=11时，y=135 当x=12时，y=140 整体来看，随着x值的增加，y值呈现波动上升的趋势。其中： x值从1到12连续递增 y值在105到140之间变化 虽然个别点有轻微回落（如x=4时y比x=3时略降），但总体保持增长态势";
 
-    return res.status(200).json({ data: mappedData, answer: description,x,y });
+    return res
+      .status(200)
+      .json({ data: mappedData, answer: description, x, y });
   } catch (err) {
     return res.status(400).json({ err: err.message });
   }

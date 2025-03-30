@@ -3,7 +3,8 @@ const SECRET_KEY = "your-secret-key"; // 生产环境请使用环境变量
 
 // 认证中间件
 const authenticateToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1]; // 从请求头获取 token
+  const token = req.headers.authorization?.split(" ")[1]; // 从请求头获取 token，适用于token没有配置httponly，js前端手动发送的情况
+  // const token = req.cookies?.estimaToken;
   if (!token) {
     return res.status(401).json({ message: "未提供 Token" });
   }

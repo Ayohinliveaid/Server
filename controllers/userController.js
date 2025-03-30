@@ -8,8 +8,16 @@ const login = async (req, res) => {
     if (user.password !== password) {
       return res.status(200).json({ message: "密码错误" });
     } else {
-      const user = { phoneNumber, password };
+      const user = { phoneNumber };
       const token = userModel.generateToken(user);
+      res.cookie("estimaToken", token, {
+        httpOnly: false, // 允许 JavaScript 访问
+        secure: false, // 开发环境设置 false，生产环境应为 true（HTTPS）
+        sameSite: "none", // 允许跨站请求携带
+        maxAge: 7200 * 1000, // 7200 秒
+      });
+      // console.log("Set-Cookie:", res.getHeaders()["set-cookie"]); // 检查是否正确返回
+      // console.log("响应头:", res.getHeaders());
       return res.status(200).json({ message: "登录成功", token });
     }
   } catch (err) {
