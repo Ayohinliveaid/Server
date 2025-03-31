@@ -115,11 +115,29 @@ const deleteChatFromSavedChats = (chat) => {
   });
 };
 
+const deleteChatFromChatHistory = (chat) => {
+  return new Promise((reslove, reject) => {
+    const id = chat.id;
+    connection.query(
+      "delete from chatHistory where id = ?;",
+      [id],
+      (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          reslove("删除成功");
+        }
+      }
+    );
+  });
+};
+
 module.exports = {
   saveChatToChatHistory,
   saveChatToSavedChats,
   getChatHistory,
   getSavedChats,
   deleteChatFromSavedChats,
+  deleteChatFromChatHistory,
   updateSavedState,
 };
