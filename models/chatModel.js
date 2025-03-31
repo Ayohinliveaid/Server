@@ -46,11 +46,11 @@ const saveChatToSavedChats = (chat, user = { phoneNumber: 19106537806 }) => {
   //将chatHistory中对话的saved属性改为1，标记为已经保存
 };
 
-const updateSavedState = (chat) => {
+const updateSavedState = (chat, state) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "update chatHistory set saved = 1 where id = ?",
-      [chat.id],
+      "update chatHistory set saved = ? where id = ?",
+      [state, chat.id],
       (err, rows) => {
         if (err) {
           reject(err);
@@ -98,10 +98,11 @@ const getSavedChats = (user = { phoneNumber: 19106537806 }) => {
   });
 };
 
-const deleteChat = (id) => {
+const deleteChatFromSavedChats = (chat) => {
   return new Promise((reslove, reject) => {
+    const id = chat.id;
     connection.query(
-      "delete from chatHistory where id = ?;",
+      "delete from savedChats where id = ?;",
       [id],
       (err, rows) => {
         if (err) {
@@ -119,6 +120,6 @@ module.exports = {
   saveChatToSavedChats,
   getChatHistory,
   getSavedChats,
-  deleteChat,
+  deleteChatFromSavedChats,
   updateSavedState,
 };

@@ -8,6 +8,12 @@ chatRouter.post(
   userMiddlewares.authenticateToken,
   chatController.saveTheChat
 );
+
+chatRouter.post(
+  "/deleteTheChat",
+  userMiddlewares.authenticateToken,
+  chatController.deleteTheChat
+);
 chatRouter.post(
   "/updateChatHistory",
   userMiddlewares.authenticateToken,

@@ -6,8 +6,21 @@ const saveTheChat = async (req, res) => {
   try {
     const { chat, user } = req.body;
     await chatModel.saveChatToSavedChats(chat, user);
-    await chatModel.updateSavedState(chat);
+    const state = 1;
+    await chatModel.updateSavedState(chat, state);
     return res.status(200).json({ message: "保存成功" });
+  } catch (err) {
+    return res.status(400).json({ err: err.message });
+  }
+};
+
+const deleteTheChat = async (req, res) => {
+  try {
+    const { chat, user } = req.body;
+    await chatModel.deleteChatFromSavedChats(chat, user);
+    const state = 0;
+    await chatModel.updateSavedState(chat, state);
+    return res.status(200).json({ message: "删除成功" });
   } catch (err) {
     return res.status(400).json({ err: err.message });
   }
@@ -19,7 +32,7 @@ const updateChatHistory = async (req, res) => {
     const { chat, user } = req.body;
     const rows = await chatModel.getChatHistory(user);
     if (rows.length >= 10) {
-      await chatModel.deleteChat(rows[0].id);
+      await chatModel.deleteChat(rows[0]);
     }
     await chatModel.saveChatToChatHistory(chat, user);
     return res.status(200).json({ message: "更新成功" });
@@ -307,6 +320,7 @@ const getResponse = async (req, res) => {
 
 module.exports = {
   saveTheChat,
+  deleteTheChat,
   updateChatHistory,
   getChatHistroy,
   getSavedChats,
