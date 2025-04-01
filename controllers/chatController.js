@@ -31,19 +31,9 @@ const updateChatHistory = async (req, res) => {
   try {
     const { chat, user } = req.body;
     const rows = await chatModel.getChatHistory(user);
-    console.log(
-      "getChatHistoryRows删除前",
-      rows.map((v) => v.id),
-      "rows[0]",
-      rows[0]
-    );
     if (rows.length >= 10) {
       await chatModel.deleteChatFromChatHistory(rows[0]);
     }
-    console.log(
-      "getChatHistoryRows删除后",
-      rows.map((v) => v.id)
-    );
     await chatModel.saveChatToChatHistory(chat, user);
     return res.status(200).json({ message: "更新成功" });
   } catch (err) {
@@ -84,18 +74,29 @@ const getResponse = async (req, res) => {
     res.writeHead(200, {
       "Content-Type": "application/json",
     });
+    let response = null;
     res.write(JSON.stringify({ step: 0, answer: "正在分析问题" }) + "\n");
     const { question } = req.body;
-    const config = await AIModel.configFromDS(question);
-    // console.log("config", config);
-
-    res.write(
-      JSON.stringify({
-        step: 1,
-        answer: "问题已分析完成，正在检索房产数据",
-        config,
-      }) + "\n"
-    );
+    let config = null;
+    response = await AIModel.configFromDS(question);
+    if (!response.stateCode || response.stateCode != 1) {
+      res.end(
+        JSON.stringify({
+          step: 1,
+          answer: response.answer,
+        }) + "\n"
+      );
+      return;
+    } else {
+      config = response.answer;
+      res.write(
+        JSON.stringify({
+          step: 1,
+          answer: "问题已分析完成，正在检索房产数据",
+          config,
+        }) + "\n"
+      );
+    }
 
     // //构造房产API的路由并请求获得房产信息
     // const data = await propertyModel.requestRealtorAPI(config);
@@ -109,19 +110,32 @@ const getResponse = async (req, res) => {
 
     //请求数据集中坐标的名称，作为xy值
     const list = propertyModel.getKeys(properties);
-    const dimension = await AIModel.dimensionFromDS(list, question);
-    const x = propertyModel.getChildAndParent(dimension.x).child;
-    const y = propertyModel.getChildAndParent(dimension.y).child;
-    const xParent = propertyModel.getChildAndParent(dimension.x).parent;
-    const yParent = propertyModel.getChildAndParent(dimension.y).parent;
-    // console.log("dimension", dimension);
-    res.write(
-      JSON.stringify({
-        step: 3,
-        answer: "信息维度分析完成，正在处理数据",
-        dimension,
-      }) + "\n"
-    );
+    response = await AIModel.dimensionFromDS(list, question);
+    let dimension, x, xParent, y, yParent;
+
+    if (!response.stateCode || response.stateCode != 1) {
+      res.end(
+        JSON.stringify({
+          step: 3,
+          answer: response.answer,
+        }) + "\n"
+      );
+      return;
+    } else {
+      dimension = response.answer;
+      x = propertyModel.getChildAndParent(dimension.x).child;
+      y = propertyModel.getChildAndParent(dimension.y).child;
+      xParent = propertyModel.getChildAndParent(dimension.x).parent;
+      yParent = propertyModel.getChildAndParent(dimension.y).parent;
+      // console.log("dimension", dimension);
+      res.write(
+        JSON.stringify({
+          step: 3,
+          answer: "信息维度分析完成，正在处理数据",
+          dimension,
+        }) + "\n"
+      );
+    }
 
     //调用PropertyModel对房产信息进行过滤
     const mappedData = propertyModel.mappedData(
@@ -143,23 +157,35 @@ const getResponse = async (req, res) => {
         y,
       }) + "\n"
     );
-
     //调用AI描述接口，对房产信息进行描述
-    const description = await AIModel.descriptionFromDS(mappedData, question);
-    // console.log("description", description);
-    res.write(
-      JSON.stringify({
-        step: 5,
-        answer: description,
-        // answer: description,
-      }) + "\n"
-    );
+    response = await AIModel.descriptionFromDS(mappedData, question);
+    console.log("aiResponse", response);
+    if (!response.stateCode || response.stateCode != 1) {
+      console.log("end branch answer", response.answer);
+      res.end(
+        JSON.stringify({
+          step: 5,
+          answer: response.answer,
+        }) + "\n"
+      );
+      return;
+    } else {
+      const description = response.answer;
+      console.log("write branch answer", description);
+      res.write(
+        JSON.stringify({
+          step: 5,
+          answer: description,
+          // answer: description,
+        }) + "\n"
+      );
+    }
 
     res.end();
   } catch (err) {
-    res.writeHead(400, {
-      "Content-Type": "application/json",
-    });
+    // res.writeHead(400, {
+    //   "Content-Type": "application/json",
+    // });
     res.end(JSON.stringify({ err: err.message }));
   }
 };

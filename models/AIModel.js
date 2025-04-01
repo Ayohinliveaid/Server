@@ -29,8 +29,32 @@ const paramList = [
   },
 ];
 //AI上下文
-//标注输出格式
+
+//定义AI状态码
+const stateCode = {
+  1: "成功匹配",
+  2: "问题模糊请详细提问",
+  3: "问题详细但是超出了当前的选择范围",
+};
+//标准回复
 const standardResponse = {
+  stateCode: 0,
+  answer: String || Object,
+};
+//AI状态码描述
+const messageOfStateCode = [
+  {
+    role: "system",
+    content:
+      "to answer question provided later ,you have three state, each state has a correpondding code like following: " +
+      JSON.stringify(stateCode) +
+      ",don't use code 2 and 3 arbitrarily. And you mush return json like this: " +
+      JSON.stringify(standardResponse) +
+      ",even though answer part is '', no attribute can be emmited, put the answer of later questions or your explanation of the state in Chinese in the answer part",
+  },
+];
+//标注输出格式
+const standardConfig = {
   path: "/search/forsale",
   params: {
     location: "houston ,tx",
@@ -47,28 +71,29 @@ const messagesOfConfig = [
   {
     role: "system",
     content:
-      "I am using 'https://realtor16.p.rapidapi.com', generate its parameters according to the folling JavaScript object" +
+      "generate an api request config according the following question" +
       JSON.stringify(paramList) +
-      ",only return JSON object like " +
-      JSON.stringify(standardResponse),
+      ",you must return JSON object like this standard config as the answer part, no attribute can be emmited" +
+      JSON.stringify(standardConfig),
   },
 ];
 const messagesOfDescription = [
   {
     role: "system",
     content:
-      "Describe the json data of answer I provided in standard Mandarin Chinese, according to the question. Start with '该数据",
+      "Describe the json data following in standard Mandarin Chinese as the answer part, according to the question. Start with '该数据",
   },
 ];
 const messageOfDimension = [
   {
     role: "system",
     content:
-      "Select the attribute names from the provided dataset’s property list based on the natural language question and map them to the X and Y axes in the Chart G2 visualization" +
-      ",only return JSON object like " +
+      "Select attributes from the following property list accroding to the question as the dimension of a dataset of a chart" +
+      ", return JSON object like this as the answer part" +
       JSON.stringify(standardDimension),
   },
 ];
+//设置AI状态
 
 //向AI提问获取房地产API参数
 const configFromDS = (text) => {
@@ -80,7 +105,7 @@ const configFromDS = (text) => {
   return new Promise((resolve, reject) => {
     openai.chat.completions
       .create({
-        messages: [...messagesOfConfig, newMessages],
+        messages: [...messageOfStateCode, ...messagesOfConfig, newMessages],
         model: "deepseek-chat",
         response_format: {
           type: "json_object",
@@ -99,20 +124,37 @@ const configFromDS = (text) => {
 const descriptionFromDS = (data, question) => {
   const dataMessages = {
     role: "user",
-    content: typeof data === "string" ? data : JSON.stringify(data), // Only stringify objects
+    content: typeof data == "string" ? data : JSON.stringify(data), // Only stringify objects
   };
   const questionMessages = {
     role: "user",
-    content: question, // Only stringify objects
+    content: "haha", // Only stringify objects
   };
+  console.log("questionMessages", questionMessages);
+  console.log("dataMessages", dataMessages);
   return new Promise((resolve, reject) => {
     openai.chat.completions
       .create({
-        messages: [...messagesOfDescription, dataMessages, questionMessages],
+        messages: [
+          ...messageOfStateCode,
+          ...messagesOfDescription,
+          dataMessages,
+          questionMessages,
+        ],
         model: "deepseek-chat",
       })
       .then((completion) => {
-        resolve(removeMd(completion.choices[0].message.content));
+        let content = removeMd(completion.choices[0].message.content);
+        console.log("Raw AI Response:", content); // 先看看 AI 具体返回了什么
+
+        // **尝试提取 JSON 结构**
+        const jsonMatch = content.match(/\{.*\}/s);
+        if (jsonMatch) {
+          content = jsonMatch[0]; // 取出 JSON 部分
+        }
+
+        const jsonData = JSON.parse(content);
+        resolve(jsonData);
       })
       .catch((error) => {
         reject(error);
@@ -131,7 +173,7 @@ const dimensionFromDS = (list, question) => {
   return new Promise((resolve, reject) => {
     openai.chat.completions
       .create({
-        messages: [...messageOfDimension, newMessages],
+        messages: [...messageOfStateCode, ...messageOfDimension, newMessages],
         model: "deepseek-chat",
         response_format: {
           type: "json_object",
