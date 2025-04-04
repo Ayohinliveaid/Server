@@ -279,6 +279,7 @@ const pearsonCorrelation = (data) => {
   const denominator = Math.sqrt(varianceX * varianceY);
   const result = denominator === 0 ? 0 : numerator / denominator;
   if (Math.abs(result) > 0.7) {
+    console.log("linear correlation", result);
     return true;
   } else {
     return false;
@@ -328,7 +329,7 @@ const ljungBoxTest = (data, maxLag) => {
   const alpha = 0.01;
 
   const criticalValue = getChiSquaredCriticalValue(maxLag, alpha);
-  console.log("Q", Q);
+  console.log("ljungBoxQ", Q);
   console.log("criticalValue", criticalValue);
 
   if (Q > criticalValue) {

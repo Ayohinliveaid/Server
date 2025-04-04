@@ -2,7 +2,7 @@
 
 const predictionModel = require("./predictionModel");
 const evaluationModel = require("./evaluationModel");
-const propertyModel = require("./propertyModel");
+const propertyModel = require("../propertyModel");
 const { json } = require("express");
 
 //调用评价模型，对各个预测方法生成的拟合数据进行评分，
@@ -115,31 +115,48 @@ const optimizedModel = (data) => {
     Math.floor(data.length / 4)
   );
   if (isAutocorelated) {
-    console.log("数据自相关性过强，建议使用ARIMA模型");
+    console.log("自相关性强，使用ARIMA模型");
     return optimizedARIMAModel(data);
   } else {
     let islinear = propertyModel.pearsonCorrelation(data);
     if (islinear) {
+      console.log("线性强，使用多项式回归模型");
       return bestFittingModel(data);
-    }else{
-      if(data.length > 500){
-        return  {
+    } else {
+      if (data.length > 500) {
+        console.log("数据多而非线性，使用神经网络回归模型");
+        return {
           // params: v,
           func: predictionModel.SVMRegression.func,
           data: data,
           fittedData: [],
           fittingDegree: null,
-        }
-      }else{
-      return  {
-        // params: v,
-        func: predictionModel.BPNetworkFunction.func,
-        data: data,
-        fittedData: [],
-        fittingDegree: null,
+        };
+      } else {
+        console.log("数据少而非线性，使用支持向量回归模型");
+        return {
+          // params: v,
+          func: predictionModel.BPNetworkFunction.func,
+          data: data,
+          fittedData: [],
+          fittingDegree: null,
+        };
       }
     }
   }
 };
+
+const data = [
+  { x: 1, y: 105 },
+  { x: 2, y: 107 },
+  { x: 3, y: 110 },
+  { x: 4, y: 108 },
+  { x: 5, y: 115 },
+  { x: 6, y: 120 },
+  { x: 7, y: 118 },
+  { x: 8, y: 125 },
+  { x: 9, y: 130 },
+];
+optimizedModel(data, 1); // 示例数据
 
 module.exports = { bestFittingModel, optimizedARIMAModel, optimizedModel };
