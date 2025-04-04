@@ -49,6 +49,12 @@ predictionRouter.post(
   predictionController.SVMRegressionPredict
 );
 
+predictionRouter.post(
+  "/optimizedPredict",
+  // userMiddlewares.authenticateToken,
+  predictionController.optimizedPredict
+);
+
 // predictionRouter.post('/updatepredictionHistory', predictionController.updatepredictionHistory);
 // predictionRouter.post('/getpredictionHistroy', predictionController.getpredictionHistroy);
 // predictionRouter.post('/getSavedpredictions', predictionController.getSavedpredictions);
