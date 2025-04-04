@@ -3,7 +3,7 @@
 const predictionModel = require("./predictionModel");
 const evaluationModel = require("./evaluationModel");
 const propertyModel = require("../propertyModel");
-const dataProcessingModel = require("../models/dataProcessingModel");
+const dataProcessingModel = require("../dataProcessingModel");
 const { json } = require("express");
 
 //调用评价模型，对各个预测方法生成的拟合数据进行评分，
