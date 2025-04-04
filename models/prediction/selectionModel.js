@@ -3,6 +3,7 @@
 const predictionModel = require("./predictionModel");
 const evaluationModel = require("./evaluationModel");
 const propertyModel = require("../propertyModel");
+const dataProcessingModel = require("../models/dataProcessingModel");
 const { json } = require("express");
 
 //调用评价模型，对各个预测方法生成的拟合数据进行评分，
@@ -110,7 +111,7 @@ const optimizedARIMAModel = (data) => {
 
 const optimizedModel = (data) => {
   //Ljung-box测试计算自相关性
-  let isAutocorelated = propertyModel.ljungBoxTest(
+  let isAutocorelated = dataProcessingModel.ljungBoxTest(
     data,
     Math.floor(data.length / 4)
   );
@@ -118,7 +119,7 @@ const optimizedModel = (data) => {
     console.log("自相关性强，使用ARIMA模型");
     return optimizedARIMAModel(data);
   } else {
-    let islinear = propertyModel.pearsonCorrelation(data);
+    let islinear = dataProcessingModel.pearsonCorrelation(data);
     if (islinear) {
       console.log("线性强，使用多项式回归模型");
       return bestFittingModel(data);

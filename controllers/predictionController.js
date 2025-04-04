@@ -8,7 +8,7 @@ const linearRegressionPredict = (req, res) => {
   if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组");
   } else {
-    const convertProps = predictionModel.convertProps(data);
+    const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     const func = predictionModel.linearRegressionFunction(xyData);
     for (let v of n) {
@@ -25,7 +25,7 @@ const polynomialRegressionPredict = (req, res) => {
   if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const convertProps = predictionModel.convertProps(data);
+    const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     const func = predictionModel.polynomialRegressionFunction(xyData, degree);
     for (let v of n) {
@@ -42,7 +42,7 @@ const bestFittingModelPredict = (req, res) => {
   if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const convertProps = predictionModel.convertProps(data);
+    const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     const bestFittingModel = selectionModel.bestFittingModel(xyData);
     const func = bestFittingModel.func;
@@ -93,7 +93,7 @@ const ARIMAPredict = (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const convertProps = predictionModel.convertProps(data);
+    const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     const func = predictionModel.ARIMAFunction(xyData).func;
     // const stationary = predictionModel.ARIMAFunction(xyData).stationary;
@@ -111,7 +111,7 @@ const optimizedARIMAPredict = (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const convertProps = predictionModel.convertProps(data);
+    const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     // const func = selectionModel.optimizedARIMAModel(data).func;
     const list = selectionModel.optimizedARIMAModel(xyData);
@@ -132,7 +132,7 @@ const BPNetworkPredict = async (req, res) => {
   } else if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在空数组，引发错误");
   } else {
-    const convertProps = predictionModel.convertProps(data);
+    const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     const func = await predictionModel.BPNetworkFunction(xyData, 200, 100);
     //返回和data的{x,y}相同的格式
@@ -153,7 +153,7 @@ const SVMRegressionPredict = async (req, res) => {
   if (data.length === 0 || n.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const convertProps = predictionModel.convertProps(data);
+    const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     const SVMRegression = predictionModel.SVMRegression(xyData);
     const func = SVMRegression.func;
@@ -175,7 +175,7 @@ const optimizedPredict = (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const convertProps = predictionModel.convertProps(data);
+    const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     // const func = selectionModel.optimizedARIMAModel(data).func;
     const list = selectionModel.optimizedModel(xyData);

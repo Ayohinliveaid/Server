@@ -94,75 +94,6 @@ const ARIMAFunction = (data, p = 4, d = 4, q = 2) => {
   };
 };
 
-//将时间序列预测的数据转化格式，拼接到对象数组中
-const arrConcatenatedData = (data, arr, n = null) => {
-  data.sort((v1, v2) => v1.x - v2.x);
-  let objectArr = [];
-  if (Array.isArray(n)) {
-    objectArr = arr.map((v, i) => {
-      const x = n[i];
-      const y = v;
-      return { x, y };
-    });
-  } else {
-    let avarageGap = 0;
-    for (let i = 1; i < data.length - 1; i++) {
-      avarageGap += data[i].x - data[i - 1].x;
-    }
-    avarageGap /= data.length - 2;
-    objectArr = arr.map((v, i) => {
-      const x = data[data.length - 1].x + (i + 1) * avarageGap;
-      const y = v;
-      return { x, y };
-    });
-  }
-
-  const newData = data.concat(objectArr);
-  const originData = convertProps(data).origin(newData);
-  return originData;
-};
-
-// 将数组转为归一化的张量，输入二维数组或者一维数组
-const normalizedTensor = (arr, min = null, max = null) => {
-  const tensor = tf.tensor2d(arr, [arr.length, arr[0].length || 1]);
-  if (min && max) {
-  } else {
-    max = tensor.max();
-    min = tensor.min();
-  }
-  const normalizedResult = tensor.sub(min).div(max.sub(min));
-  return { normalizedResult, max, min };
-};
-//不转化为张量，直接归一化
-const normalizedObject = (arr, min = null, max = null) => {
-  // 计算 min 和 max，如果没有提供的话
-  if (min === null || max === null) {
-    min = Math.min(...arr.flat());
-    max = Math.max(...arr.flat());
-  }
-
-  // 归一化： (x - min) / (max - min)
-  const normalizedResult = arr.map((value) => (value - min) / (max - min));
-  return { normalizedResult, max, min };
-};
-
-//将张量反归一化，返回一维数组
-const denormalizedObject = (normalizedObject, min, max) => {
-  // const denormalizedResult = normalizedObject.mul(max.sub(min)).add(min);
-  // return denormalizedResult.arraySync().flat();
-
-  // 情况1：输入是 TensorFlow 张量
-  if (normalizedObject instanceof tf.Tensor) {
-    const denormalizedResult = normalizedObject.mul(max.sub(min)).add(min);
-    return denormalizedResult.arraySync().flat();
-  }
-
-  // 情况2：输入是普通数组
-  if (Array.isArray(normalizedObject)) {
-    const range = max - min;
-    return normalizedObject.map((v) => v * range + min);
-  }
-};
 //反向传播机器学习模型，输入数据，返回预测函数
 const BPNetworkFunction = async (
   data,
@@ -173,7 +104,7 @@ const BPNetworkFunction = async (
   //对数据进行处理，转化为张量并归一化
   const xArr = data.map((v) => v.x);
   const yArr = data.map((v) => v.y);
-  console.log("xArr:", xArr);
+  // console.log("xArr:", xArr);
 
   // const polyXArr = polynomialFeatures(xArr, degree); // 生成 x, x^2, x^3
 
@@ -300,38 +231,10 @@ const SVMRegression = (data) => {
   };
 };
 
-//处理数据，将属性转化为xy，再转化回原属性值，以便在各个预测函数中使用xy预测，但最后返回原始数据
-const convertProps = (data) => {
-  const xProp = Object.keys(data[0])[0];
-  const yProp = Object.keys(data[0])[1];
-  const xy = () => {
-    const xyResult = data.map((v) => {
-      return {
-        x: v[xProp],
-        y: v[yProp],
-      };
-    });
-    return xyResult;
-  };
-  const origin = (xyData) => {
-    const originResult = xyData.map((v) => {
-      return {
-        [xProp]: v.x,
-        [yProp]: v.y,
-      };
-    });
-    return originResult;
-  };
-
-  return { xy, origin }; //xy(),origin()即可得到对应数组
-};
-
 module.exports = {
   linearRegressionFunction,
   polynomialRegressionFunction,
   ARIMAFunction,
-  arrConcatenatedData,
   BPNetworkFunction,
   SVMRegression,
-  convertProps,
 };

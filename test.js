@@ -2,6 +2,7 @@ import AIModel from "./models/AIModel.js";
 // const propertyModel = require("./models/propertyModel");
 import propertyModel from "./models/propertyModel.js";
 import predictionModel from "./models/prediction/predictionModel.js";
+import dataProcessingModel from "./models/dataProcessingModel.js";
 
 // //测试抽象对象的数据结构，以提问AI选择参数
 // const testObj = {
@@ -24,7 +25,7 @@ import predictionModel from "./models/prediction/predictionModel.js";
 //     { id: 2, value: "Data B" },
 //   ],
 // };
-// const keys = propertyModel.getKeys(testObj);
+// const keys = dataProcessingModel.getKeys(testObj);
 
 // console.log(keys);
 
@@ -33,13 +34,13 @@ import predictionModel from "./models/prediction/predictionModel.js";
 // const text = "休斯顿市的出租的商品房的坐标";
 // const data = await propertyModel.requestLocalJSON();
 // const properties = data.properties;
-// const list = propertyModel.getKeys(data);
+// const list = dataProcessingModel.getKeys(data);
 // console.log("list", list);
 // const dimension = await AIModel.dimensionFromDS(list, text);
-// const x = propertyModel.getChildAndParent(dimension.x).child;
-// const y = propertyModel.getChildAndParent(dimension.y).child;
-// const xParent = propertyModel.getChildAndParent(dimension.x).parent;
-// const yParent = propertyModel.getChildAndParent(dimension.y).parent;
+// const x = dataProcessingModel.getChildAndParent(dimension.x).child;
+// const y = dataProcessingModel.getChildAndParent(dimension.y).child;
+// const xParent = dataProcessingModel.getChildAndParent(dimension.x).parent;
+// const yParent = dataProcessingModel.getChildAndParent(dimension.y).parent;
 // console.log("dimension", dimension);
 // console.log("x", x);
 // console.log("y", y);
@@ -47,7 +48,7 @@ import predictionModel from "./models/prediction/predictionModel.js";
 // console.log("yParent", yParent);
 
 // // 调用PropertyModel对房产信息进行过滤;
-// const mappedData = propertyModel.mappedData(
+// const mappedData = dataProcessingModel.mappedData(
 //   properties,
 //   x,
 //   y,
@@ -77,7 +78,7 @@ import predictionModel from "./models/prediction/predictionModel.js";
 //     list_price: 1750,
 //   },
 // ];
-// const convertProps = predictionModel.convertProps(data);
+// const convertProps = dataProcessingModel.convertProps(data);
 // const xyResult = convertProps.xy();
 
 // console.log("xy", xyResult);

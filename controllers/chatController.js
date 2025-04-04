@@ -1,6 +1,7 @@
 const chatModel = require("../models/chatModel");
 const AIModel = require("../models/AIModel");
 const propertyModel = require("../models/propertyModel");
+const dataProcessingModel = require("../models/dataProcessingModel");
 
 const saveTheChat = async (req, res) => {
   try {
@@ -109,7 +110,7 @@ const getResponse = async (req, res) => {
     );
 
     //请求数据集中坐标的名称，作为xy值
-    const list = propertyModel.getKeys(properties);
+    const list = dataProcessingModel.getKeys(properties);
     response = await AIModel.dimensionFromDS(list, question);
     let dimension, x, xParent, y, yParent;
 
@@ -123,10 +124,10 @@ const getResponse = async (req, res) => {
       return;
     } else {
       dimension = response.answer;
-      x = propertyModel.getChildAndParent(dimension.x).child;
-      y = propertyModel.getChildAndParent(dimension.y).child;
-      xParent = propertyModel.getChildAndParent(dimension.x).parent;
-      yParent = propertyModel.getChildAndParent(dimension.y).parent;
+      x = dataProcessingModel.getChildAndParent(dimension.x).child;
+      y = dataProcessingModel.getChildAndParent(dimension.y).child;
+      xParent = dataProcessingModel.getChildAndParent(dimension.x).parent;
+      yParent = dataProcessingModel.getChildAndParent(dimension.y).parent;
       // console.log("dimension", dimension);
       res.write(
         JSON.stringify({
@@ -138,7 +139,7 @@ const getResponse = async (req, res) => {
     }
 
     //调用PropertyModel对房产信息进行过滤
-    const mappedData = propertyModel.mappedData(
+    const mappedData = dataProcessingModel.mappedData(
       properties,
       x,
       y,
