@@ -2,6 +2,7 @@
 const axios = require("axios");
 const fs = require("fs");
 const { constants } = require("http2");
+const jStat = require("jstat");
 
 const requestCatAPI = () => {
   return new Promise((resolve, reject) => {
@@ -63,20 +64,9 @@ const simplifyObj = (obj) => {
   if (Array.isArray(simplifiedObj)) {
     simplifiedObj = simplifiedObj[0];
   } //第一个数组只能通过此处消除
-
   let queue = [simplifiedObj]; // 用队列来存储对象，首先将根对象入队
   while (queue.length > 0) {
     let current = queue.shift(); // 从队列中取出一个元素进行处理
-
-    // // 如果当前对象是数组，则将其中的第一个元素加入队列。如果元素是简单数据类型而不是对象，那么直接忽略
-    // if (Array.isArray(current)) {
-    //   if (typeof current[0] == "object") {
-    //     //只有数组的内容是对象，才简化数组，是值，则保留。
-    //     current.length = 1; // 直接修改原数组，只保留第一个元素
-    //     // current = current[0];
-    //     queue.push(...current); //第一个数组通过函数开头的语句消除
-    //   }
-    // }
     // 如果当前对象是普通对象，则遍历它的键值对
     if (typeof current === "object" && current !== null) {
       const keys = Object.keys(current);
@@ -232,13 +222,12 @@ const mappedData = (
   if (z == null) {
     mappedResult = data.map((v) => {
       return {
-        [x]: search(v, x, xParent),//返回x的实际内容而不是'x'
+        [x]: search(v, x, xParent), //返回x的实际内容而不是'x'
         [y]: search(v, y, yParent),
       };
     });
 
     // mappedResult = mappedResult.filter((v) => v.x != null && v.y != null);
-   
   } else {
     mappedResult = data.map((v) => {
       return {
@@ -251,14 +240,118 @@ const mappedData = (
     //   (v) => v.x != null && v.y != null && v.z != null
     // );
   }
-  mappedResult.filter((v) =>
-    Object.values(v).every((value) => value != null)
-  );
+  mappedResult.filter((v) => Object.values(v).every((value) => value != null));
 
   return mappedResult;
 };
 
-// requestLocalJSON();
+//数据的预处理方法，用于剔除异常值和噪声
+
+//对需要预测的数据的分析方法，计算多种指标，选择能产生最好的效果的预测模型
+
+//计算自相关性
+
+//计算线性：皮尔逊相关系数，返回绝对值，如果>0.7，说明线性关系，返回是否有线性关系true/false
+const pearsonCorrelation = (data) => {
+  const n = data.length;
+  const x = data.map((v) => v.x);
+  const y = data.map((v) => v.y);
+
+  if (x.length !== y.length) {
+    throw new Error("Arrays must have the same length");
+  }
+
+  const meanX = x.reduce((a, b) => a + b, 0) / n;
+  const meanY = y.reduce((a, b) => a + b, 0) / n;
+
+  let numerator = 0;
+  let varianceX = 0;
+  let varianceY = 0;
+
+  for (let i = 0; i < n; i++) {
+    const dx = x[i] - meanX;
+    const dy = y[i] - meanY;
+    numerator += dx * dy;
+    varianceX += dx * dx;
+    varianceY += dy * dy;
+  }
+
+  const denominator = Math.sqrt(varianceX * varianceY);
+  const result = denominator === 0 ? 0 : numerator / denominator;
+  if (Math.abs(result) > 0.7) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+//以下判断自相关性
+//计算自相关系数，延迟K阶的，参数seires要求传入数组
+const autocorrelation = (series, lag) => {
+  const n = series.length;
+  if (lag >= n) {
+    throw new Error("Lag is too large for the dataset");
+  }
+
+  const mean = series.reduce((a, b) => a + b, 0) / n;
+
+  let numerator = 0;
+  for (let i = 0; i < n - lag; i++) {
+    numerator += (series[i] - mean) * (series[i + lag] - mean);
+  }
+
+  let denominator = 0;
+  for (let i = 0; i < n; i++) {
+    denominator += Math.pow(series[i] - mean, 2);
+  }
+
+  return denominator === 0 ? 0 : numerator / denominator;
+};
+//从库中获取卡方分布的临界值
+const getChiSquaredCriticalValue = (df, alpha) => {
+  return jStat.chisquare.inv(1 - alpha, df);
+};
+
+//ljung-box检验，返回是否具有自相关性，true/flase
+const ljungBoxTest = (data, maxLag) => {
+  const y = data.map((v) => v.y);
+  const n = data.length;
+  let Q = 0;
+
+  // 计算前maxLag个滞后期的自相关系数
+  for (let lag = 1; lag <= maxLag; lag++) {
+    const acf = autocorrelation(y, lag);
+    console.log(lag, acf);
+    Q += (n * (n + 2) * Math.pow(acf, 2)) / (n - lag);
+  }
+  // self-defined Significance level
+  const alpha = 0.01;
+
+  const criticalValue = getChiSquaredCriticalValue(maxLag, alpha);
+  console.log("Q", Q);
+  console.log("criticalValue", criticalValue);
+
+  if (Q > criticalValue) {
+    console.log("autocorrelation, reject the null hypothesis");
+    return true;
+  } else {
+    console.log("none-autocorrelation, fail to reject the null hypothesis");
+    return false;
+  }
+};
+
+// const data = [
+//   { x: 1, y: 105 },
+//   { x: 2, y: 107 },
+//   { x: 3, y: 110 },
+//   { x: 4, y: 108 },
+//   { x: 5, y: 115 },
+//   { x: 6, y: 120 },
+//   { x: 7, y: 118 },
+//   { x: 8, y: 125 },
+//   { x: 9, y: 130 },
+// ];
+// ljungBoxTest(data, 1); // 示例数据
 
 module.exports = {
   requestCatAPI,
@@ -272,4 +365,6 @@ module.exports = {
   search,
   mappedData,
   getChildAndParent,
+  pearsonCorrelation,
+  ljungBoxTest,
 };

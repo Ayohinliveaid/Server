@@ -2,10 +2,12 @@
 
 const predictionModel = require("./predictionModel");
 const evaluationModel = require("./evaluationModel");
+const propertyModel = require("./propertyModel");
 const { json } = require("express");
 
 //调用评价模型，对各个预测方法生成的拟合数据进行评分，
 
+//bestFittingModel表示多项式回归最佳模型
 const bestFittingModel = (data) => {
   //首先调用测试模型中所有预测方法，生成相应的拟合数据，具体来说，是多项式回归的方法中，使用不同的方法作为项数
   const degrees = [...Array(4)].map((v, i) => i + 1); //多项式回归，项数的范围
@@ -96,7 +98,7 @@ const optimizedARIMAModel = (data) => {
     v.model.fit(v.data.map((value) => value.y));
   });
 
-  //选出最好的模型，目前仅仅从多项式回归选择，也就是仅仅选择多项式项数
+  //选出最好的模型，目前仅仅从ARIMA回归选择，也就是仅仅选择p,d,q
   const bestPredictionModel = ARIMAModelList.reduce((model, v, i) => {
     return model.fittingDegree > v.fittingDegree ? model : ARIMAModelList[i];
   }, ARIMAModelList[0]);
@@ -104,4 +106,40 @@ const optimizedARIMAModel = (data) => {
   return ARIMAModelList; //此处返回预测模型，便于查看选择结果
 };
 
-module.exports = { bestFittingModel, optimizedARIMAModel };
+//综合多项式回归选择最佳预测模型，输入数据，调用最佳参数的对应模型
+
+const optimizedModel = (data) => {
+  //Ljung-box测试计算自相关性
+  let isAutocorelated = propertyModel.ljungBoxTest(
+    data,
+    Math.floor(data.length / 4)
+  );
+  if (isAutocorelated) {
+    console.log("数据自相关性过强，建议使用ARIMA模型");
+    return optimizedARIMAModel(data);
+  } else {
+    let islinear = propertyModel.pearsonCorrelation(data);
+    if (islinear) {
+      return bestFittingModel(data);
+    }else{
+      if(data.length > 500){
+        return  {
+          // params: v,
+          func: predictionModel.SVMRegression.func,
+          data: data,
+          fittedData: [],
+          fittingDegree: null,
+        }
+      }else{
+      return  {
+        // params: v,
+        func: predictionModel.BPNetworkFunction.func,
+        data: data,
+        fittedData: [],
+        fittingDegree: null,
+      }
+    }
+  }
+};
+
+module.exports = { bestFittingModel, optimizedARIMAModel, optimizedModel };

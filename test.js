@@ -62,23 +62,121 @@ import predictionModel from "./models/prediction/predictionModel.js";
 // const description = await AIModel.descriptionFromDS(mappedData,text);
 // console.log("description", description);
 
-//测试数据的参数转换
-const data = [
-  {
-    sqft: 1619,
-    list_price: 1795,
-  },
-  {
-    sqft: 1865,
-    list_price: 2050,
-  },
-  {
-    sqft: 1548,
-    list_price: 1750,
-  },
-];
-const convertProps = predictionModel.convertProps(data);
-const xyResult = convertProps.xy();
+// //测试数据的参数转换
+// const data = [
+//   {
+//     sqft: 1619,
+//     list_price: 1795,
+//   },
+//   {
+//     sqft: 1865,
+//     list_price: 2050,
+//   },
+//   {
+//     sqft: 1548,
+//     list_price: 1750,
+//   },
+// ];
+// const convertProps = predictionModel.convertProps(data);
+// const xyResult = convertProps.xy();
 
-console.log("xy", xyResult);
-console.log("origin", convertProps.origin(xyResult));
+// console.log("xy", xyResult);
+// console.log("origin", convertProps.origin(xyResult));
+
+//测试皮尔逊相关系数
+// //计算线性：皮尔逊相关系数
+// const pearsonCorrelation = (x, y) => {
+//   const n = x.length;
+
+//   if (x.length !== y.length) {
+//     throw new Error("Arrays must have the same length");
+//   }
+
+//   const meanX = x.reduce((a, b) => a + b, 0) / n;
+//   const meanY = y.reduce((a, b) => a + b, 0) / n;
+
+//   let numerator = 0;
+//   let varianceX = 0;
+//   let varianceY = 0;
+
+//   for (let i = 0; i < n; i++) {
+//     const dx = x[i] - meanX;
+//     const dy = y[i] - meanY;
+//     numerator += dx * dy;
+//     varianceX += dx * dx;
+//     varianceY += dy * dy;
+//   }
+
+//   const denominator = Math.sqrt(varianceX * varianceY);
+
+//   return denominator === 0 ? 0 : numerator / denominator;
+// };
+
+// // 示例数据
+// const sqft = [756, 816, 822, 840, 844, 856, 910, 960, 973, 980, 1004, 1008];
+// const list_price = [
+//   1127, 1200, 1295, 1500, 1400, 999, 1000, 1950, 1300, 1225, 1550, 1299,
+// ];
+
+// console.log("Pearson Correlation:", pearsonCorrelation(sqft, list_price));
+
+// //计算自相关系数，延迟K阶的
+// const autocorrelation = (series, lag) => {
+//   const n = series.length;
+//   if (lag >= n) {
+//     throw new Error("Lag is too large for the dataset");
+//   }
+
+//   const mean = series.reduce((a, b) => a + b, 0) / n;
+
+//   let numerator = 0;
+//   for (let i = 0; i < n - lag; i++) {
+//     numerator += (series[i] - mean) * (series[i + lag] - mean);
+//   }
+
+//   let denominator = 0;
+//   for (let i = 0; i < n; i++) {
+//     denominator += Math.pow(series[i] - mean, 2);
+//   }
+
+//   return denominator === 0 ? 0 : numerator / denominator;
+// };
+
+// //ljung-box检验
+// const ljungBoxTest = (data, maxLag) => {
+//   const n = data.length;
+//   let Q = 0;
+
+//   // 计算前maxLag个滞后期的自相关系数
+//   for (let lag = 1; lag <= maxLag; lag++) {
+//     const acf = autocorrelation(data, lag);
+//     Q += (n * (n + 2) * Math.pow(acf, 2)) / (n - lag);
+//   }
+
+//   return Q;
+// };
+
+// // 示例数据
+// const data = [
+//   1127, 1200, 1295, 1500, 1400, 999, 1000, 1950, 1300, 1225, 1550, 1299,
+// ];
+
+// // 计算Ljung-Box统计量，假设我们计算前5个滞后期
+// const maxLag = 5;
+// const Q = ljungBoxTest(data, maxLag);
+// console.log("Ljung-Box Statistics:", Q);
+
+//测试 chi-squared临界值
+import jStat from "jstat";
+
+// Function to get chi-squared critical value
+const getChiSquaredCriticalValue = (df, alpha) => {
+  return jStat.chisquare.inv(1 - alpha, df);
+};
+
+// Example: Chi-squared critical value for degrees of freedom = 5 and significance level = 0.05
+const df = 5; // Degrees of freedom
+const alpha = 0.05; // Significance level
+
+const criticalValue = getChiSquaredCriticalValue(df, alpha);
+console.log("criticalValue:", criticalValue);
