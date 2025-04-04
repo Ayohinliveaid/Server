@@ -15,37 +15,37 @@ predictionRouter.post(
 );
 predictionRouter.post(
   "/bestFittingModelPredict",
-  userMiddlewares.authenticateToken,
+  // userMiddlewares.authenticateToken,
   predictionController.bestFittingModelPredict
 );
 
 predictionRouter.post(
   "/testEvaluationModel",
-  userMiddlewares.authenticateToken,
+  // userMiddlewares.authenticateToken,
   predictionController.testEvaluationModel
 );
 
 predictionRouter.post(
   "/ARIMAPredict",
-  userMiddlewares.authenticateToken,
+  // userMiddlewares.authenticateToken,
   predictionController.ARIMAPredict
 );
 
 predictionRouter.post(
   "/optimizedARIMAPredict",
-  userMiddlewares.authenticateToken,
+  // userMiddlewares.authenticateToken,
   predictionController.optimizedARIMAPredict
 );
 
 predictionRouter.post(
   "/BPNetworkPredict",
-  userMiddlewares.authenticateToken,
+  // userMiddlewares.authenticateToken,
   predictionController.BPNetworkPredict
 );
 
 predictionRouter.post(
   "/SVMRegressionPredict",
-  userMiddlewares.authenticateToken,
+  // userMiddlewares.authenticateToken,
   predictionController.SVMRegressionPredict
 );
 

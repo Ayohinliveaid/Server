@@ -104,12 +104,12 @@ const optimizedARIMAModel = (data) => {
     return model.fittingDegree > v.fittingDegree ? model : ARIMAModelList[i];
   }, ARIMAModelList[0]);
 
-  return ARIMAModelList; //此处返回预测模型，便于查看选择结果
+  return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
 
 //综合多项式回归选择最佳预测模型，输入数据，调用最佳参数的对应模型
 
-const optimizedModel = (data) => {
+const optimizedModel = async (data) => {
   //Ljung-box测试计算自相关性
   let isAutocorelated = dataProcessingModel.ljungBoxTest(
     data,
@@ -124,40 +124,43 @@ const optimizedModel = (data) => {
       console.log("线性强，使用多项式回归模型");
       return bestFittingModel(data);
     } else {
-      if (data.length > 500) {
-        console.log("数据多而非线性，使用神经网络回归模型");
-        return {
-          // params: v,
-          func: predictionModel.SVMRegression.func,
-          data: data,
-          fittedData: [],
-          fittingDegree: null,
-        };
-      } else {
+      if (data.length < 500) {
+        // console.log("哈哈，进入了data.length < 500的分支");
         console.log("数据少而非线性，使用支持向量回归模型");
         return {
           // params: v,
-          func: predictionModel.BPNetworkFunction.func,
+          func: predictionModel.SVMRegression(data).func,
+          // data: data,
+          // fittedData: [],
+          // fittingDegree: null,
+          note: "this is SVMRegression",
+        };
+      } else {
+        console.log("数据多而非线性，使用神经网络回归模型");
+        return {
+          // params: v,
+          func: await predictionModel.BPNetworkFunction(data),
           data: data,
-          fittedData: [],
-          fittingDegree: null,
+          // fittedData: [],
+          // fittingDegree: null,
+          note: "this is BPNetworkRegression",
         };
       }
     }
   }
 };
 
-const data = [
-  { x: 1, y: 105 },
-  { x: 2, y: 107 },
-  { x: 3, y: 110 },
-  { x: 4, y: 108 },
-  { x: 5, y: 115 },
-  { x: 6, y: 120 },
-  { x: 7, y: 118 },
-  { x: 8, y: 125 },
-  { x: 9, y: 130 },
-];
-optimizedModel(data, 1); // 示例数据
+// const data = [
+//   { x: 1, y: 105 },
+//   { x: 2, y: 107 },
+//   { x: 3, y: 110 },
+//   { x: 4, y: 108 },
+//   { x: 5, y: 115 },
+//   { x: 6, y: 120 },
+//   { x: 7, y: 118 },
+//   { x: 8, y: 125 },
+//   { x: 9, y: 130 },
+// ];
+// optimizedModel(data, 1); // 示例数据
 
 module.exports = { bestFittingModel, optimizedARIMAModel, optimizedModel };

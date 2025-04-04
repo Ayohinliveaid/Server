@@ -1,6 +1,6 @@
 //数据处理模型
 const jStat = require("jstat");
-
+const tf = require("@tensorflow/tfjs");
 //抽象出数据集的结构，首先简化数组，只保留第一个元素。使用广度优先算法。
 const simplifyObj = (obj) => {
   let simplifiedObj = JSON.parse(JSON.stringify(obj));
@@ -287,7 +287,7 @@ const getPredictedX = (data, isARIMA = 0) => {
     data.sort((v1, v2) => v1.x - v2.x);
     let avarageGap = 0;
     const predictedX = [];
-    avarageGap = (data[dataN - 1].x - data[0].x) / dataN;
+    avarageGap = (data[dataN - 1].x - data[0].x) / (dataN - 1);
     for (let i = 1; i <= n; i++) {
       predictedX.push(data[dataN - 1].x + (i + 1) * avarageGap);
     }
@@ -295,10 +295,11 @@ const getPredictedX = (data, isARIMA = 0) => {
   }
 };
 
-//将时间序列预测的数据转化格式，拼接到对象数组中，n表示要预测x的数组或者数量
+//将时间序列预测的数据转化格式，拼接到对象数组中，n表示要预测x的数组或者数量，如果是数组，就作为参数传入
 const arrConcatenatedData = (data, arr, n = null) => {
   data.sort((v1, v2) => v1.x - v2.x);
   let objectArr = [];
+  //如果是数组推入数组中元素
   if (Array.isArray(n)) {
     objectArr = arr.map((v, i) => {
       const x = n[i];
@@ -306,9 +307,12 @@ const arrConcatenatedData = (data, arr, n = null) => {
       return { x, y };
     });
   } else {
-    const predictedX = getPredictedX(data);
+    // 如果是数量，推入等间距的数量的元素
+    const dataN = data.length;
+    let avarageGap = 0;
+    avarageGap = (data[dataN - 1].x - data[0].x) / (dataN - 1);
     objectArr = arr.map((v, i) => {
-      const x = data[data.length - 1].x + (i + 1) * avarageGap;
+      const x = data[dataN - 1].x + (i + 1) * avarageGap;
       const y = v;
       return { x, y };
     });

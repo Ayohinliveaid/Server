@@ -151,6 +151,7 @@ const BPNetworkFunction = async (
   });
 
   const func = (inputArr) => {
+    inputArr = inputArr.map((v) => [Number(v)]);
     // const polyInputArr = polynomialFeatures(inputArr, degree);
     //记住预测阶段，归一化都要根据训练阶段的缩放比例
     const normalizedInput = dataProcessingModel.normalizedTensor(
@@ -215,6 +216,7 @@ const SVMRegression = (data) => {
       if (!Array.isArray(inputArr[0])) {
         inputArr = inputArr.map((v) => [v]);
       }
+      console.log("inputArr:", inputArr);
       const normalizedInput = dataProcessingModel
         .normalizedObject(inputArr, inputMin, inputMax)
         .normalizedResult.map((v) => [v]);
