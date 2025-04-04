@@ -1,7 +1,4 @@
-//测试调用Cat信息API
-const axios = require("axios");
-const fs = require("fs");
-const { constants } = require("http2");
+//数据处理模型
 const jStat = require("jstat");
 
 //抽象出数据集的结构，首先简化数组，只保留第一个元素。使用广度优先算法。
@@ -279,7 +276,26 @@ const ljungBoxTest = (data, maxLag) => {
 //   { x: 9, y: 130 },
 // ];
 // ljungBoxTest(data, 1); // 示例数据
-//将时间序列预测的数据转化格式，拼接到对象数组中
+
+//对于预测数据，获取要预测x的值，输入一个data，返回要预测的x的数组，以输入的x平均间隔为基准的后面n/10个数
+const getPredictedX = (data, isARIMA = 0) => {
+  const dataN = data.length;
+  const n = dataN < 10 ? 1 : Math.floor(dataN / 10);
+  if (isARIMA == 1) {
+    return n;
+  } else {
+    data.sort((v1, v2) => v1.x - v2.x);
+    let avarageGap = 0;
+    const predictedX = [];
+    avarageGap = (data[dataN - 1].x - data[0].x) / dataN;
+    for (let i = 1; i <= n; i++) {
+      predictedX.push(data[dataN - 1].x + (i + 1) * avarageGap);
+    }
+    return predictedX;
+  }
+};
+
+//将时间序列预测的数据转化格式，拼接到对象数组中，n表示要预测x的数组或者数量
 const arrConcatenatedData = (data, arr, n = null) => {
   data.sort((v1, v2) => v1.x - v2.x);
   let objectArr = [];
@@ -290,11 +306,7 @@ const arrConcatenatedData = (data, arr, n = null) => {
       return { x, y };
     });
   } else {
-    let avarageGap = 0;
-    for (let i = 1; i < data.length - 1; i++) {
-      avarageGap += data[i].x - data[i - 1].x;
-    }
-    avarageGap /= data.length - 2;
+    const predictedX = getPredictedX(data);
     objectArr = arr.map((v, i) => {
       const x = data[data.length - 1].x + (i + 1) * avarageGap;
       const y = v;
@@ -378,7 +390,6 @@ module.exports = {
   simplifyObj,
   getKeys,
   flattenObject,
-
   DFS,
   BFS,
   search,
@@ -387,6 +398,10 @@ module.exports = {
   pearsonCorrelation,
   ljungBoxTest,
 
+  getPredictedX,
   arrConcatenatedData,
+  normalizedTensor,
+  normalizedObject,
+  denormalizedObject,
   convertProps,
 };

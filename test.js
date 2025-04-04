@@ -167,17 +167,31 @@ import dataProcessingModel from "./models/dataProcessingModel.js";
 // const Q = ljungBoxTest(data, maxLag);
 // console.log("Ljung-Box Statistics:", Q);
 
-//测试 chi-squared临界值
-import jStat from "jstat";
+// //测试 chi-squared临界值
+// import jStat from "jstat";
 
-// Function to get chi-squared critical value
-const getChiSquaredCriticalValue = (df, alpha) => {
-  return jStat.chisquare.inv(1 - alpha, df);
-};
+// // Function to get chi-squared critical value
+// const getChiSquaredCriticalValue = (df, alpha) => {
+//   return jStat.chisquare.inv(1 - alpha, df);
+// };
 
-// Example: Chi-squared critical value for degrees of freedom = 5 and significance level = 0.05
-const df = 5; // Degrees of freedom
-const alpha = 0.05; // Significance level
+// // Example: Chi-squared critical value for degrees of freedom = 5 and significance level = 0.05
+// const df = 5; // Degrees of freedom
+// const alpha = 0.05; // Significance level
 
-const criticalValue = getChiSquaredCriticalValue(df, alpha);
-console.log("criticalValue:", criticalValue);
+// const criticalValue = getChiSquaredCriticalValue(df, alpha);
+// console.log("criticalValue:", criticalValue);
+
+// 测试预测的x的数组
+
+const data = [
+  { x: 1, y: 2 },
+  { x: 2, y: 3 },
+  { x: 3, y: 4 },
+  { x: 5, y: 4 },
+  { x: 4, y: 4 },
+  { x: 6, y: 4 },
+];
+
+const getPredictedX = dataProcessingModel.getPredictedX(data);
+console.log("getPredictedX", getPredictedX);

@@ -3,6 +3,7 @@ const math = require("mathjs");
 const ARIMA = require("arima");
 const tf = require("@tensorflow/tfjs");
 const SVM = require("libsvm-js/asm");
+const dataProcessingModel = require("../dataProcessingModel");
 // import * as tf from "@tensorflow/tfjs-node";
 
 //一元的线性回归模型，用公式计算最小二乘法函数。返回预测函数。
@@ -112,12 +113,12 @@ const BPNetworkFunction = async (
     normalizedResult: normalizedInputs,
     min: inputMin,
     max: inputMax,
-  } = normalizedTensor(xArr);
+  } = dataProcessingModel.normalizedTensor(xArr);
   const {
     normalizedResult: normalizedOutputs,
     min: outputMin,
     max: outputMax,
-  } = normalizedTensor(yArr);
+  } = dataProcessingModel.normalizedTensor(yArr);
 
   // 创建 BP 神经网络模型
   const model = tf.sequential();
@@ -152,13 +153,13 @@ const BPNetworkFunction = async (
   const func = (inputArr) => {
     // const polyInputArr = polynomialFeatures(inputArr, degree);
     //记住预测阶段，归一化都要根据训练阶段的缩放比例
-    const normalizedInput = normalizedTensor(
+    const normalizedInput = dataProcessingModel.normalizedTensor(
       inputArr,
       inputMin,
       inputMax
     ).normalizedResult;
     const predictedResult = model.predict(normalizedInput);
-    const denormalizedResult = denormalizedObject(
+    const denormalizedResult = dataProcessingModel.denormalizedObject(
       predictedResult,
       outputMin,
       outputMax
@@ -185,13 +186,13 @@ const SVMRegression = (data) => {
     normalizedResult: normalizedInputs,
     min: inputMin,
     max: inputMax,
-  } = normalizedObject(xArr);
+  } = dataProcessingModel.normalizedObject(xArr);
   normalizedInputs = normalizedInputs.map((v) => [v]);
   const {
     normalizedResult: normalizedOutputs,
     min: outputMin,
     max: outputMax,
-  } = normalizedObject(yArr);
+  } = dataProcessingModel.normalizedObject(yArr);
 
   const svm = new SVM({
     type: SVM.SVM_TYPES.EPSILON_SVR,
@@ -214,13 +215,11 @@ const SVMRegression = (data) => {
       if (!Array.isArray(inputArr[0])) {
         inputArr = inputArr.map((v) => [v]);
       }
-      const normalizedInput = normalizedObject(
-        inputArr,
-        inputMin,
-        inputMax
-      ).normalizedResult.map((v) => [v]);
+      const normalizedInput = dataProcessingModel
+        .normalizedObject(inputArr, inputMin, inputMax)
+        .normalizedResult.map((v) => [v]);
       const predictedResult = svm.predict(normalizedInput);
-      const denormalizedResult = denormalizedObject(
+      const denormalizedResult = dataProcessingModel.denormalizedObject(
         predictedResult,
         outputMin,
         outputMax
