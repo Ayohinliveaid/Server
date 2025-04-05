@@ -18,6 +18,7 @@ const bestFittingModel = (data) => {
     return {
       degree: v,
       func: predictionModel.polynomialRegressionFunction(data, v),
+      n: dataProcessingModel.getPredictedX(data), //n表示要被预测的值，根据data获得
       data: data,
       fittedData: null,
       fittingDegree: null,
@@ -26,13 +27,8 @@ const bestFittingModel = (data) => {
   //调用评价模型，对各个预测方法生成的拟合数据进行评分
   predictionModelList.forEach((v, i) => {
     v.fittedData = v.data.map((value, i) => {
-      return { x: value.x, y: v.func(value.x) };
+      return { x: value.x, y: v.func(v.data.map((v) => v.x))[i] };
     });
-    v.fittingDegree = evaluationModel.fittingDegree(
-      v.data,
-      v.fittedData,
-      v.degree
-    );
   });
 
   //选出最好的模型，目前仅仅从多项式回归选择，也就是仅仅选择多项式项数
@@ -50,7 +46,7 @@ const optimizedARIMAModel = (data) => {
   const pRange = [1, 2, 3, 4];
   const dRange = [0, 1, 3];
   const qRange = [1, 2, 3, 4];
-  const paramList = [];
+  let paramList = [];
   for (let i = 0; i < pRange.length; i++) {
     for (let j = 0; j < dRange.length; j++) {
       for (let k = 0; k < qRange.length; k++) {
@@ -69,6 +65,7 @@ const optimizedARIMAModel = (data) => {
     return {
       params: v,
       func: predictionModel.ARIMAFunction(data, v.p, v.d, v.q).func,
+      n: dataProcessingModel.getPredictedX(data, 1), //n表示要被预测的值，根据data获得，第二个参数是时间序列预测特有，表示返回数量而不是数组
       model: predictionModel.ARIMAFunction(data, v.p, v.d, v.q).model,
       data: data,
       fittedData: [],
@@ -127,9 +124,11 @@ const optimizedModel = async (data) => {
       if (data.length < 500) {
         // console.log("哈哈，进入了data.length < 500的分支");
         console.log("数据少而非线性，使用支持向量回归模型");
+        console.log("data", data);
         return {
           // params: v,
           func: predictionModel.SVMRegression(data).func,
+          n: dataProcessingModel.getPredictedX(data), //n表示要被预测的值，根据data获得
           // data: data,
           // fittedData: [],
           // fittingDegree: null,
@@ -140,6 +139,7 @@ const optimizedModel = async (data) => {
         return {
           // params: v,
           func: await predictionModel.BPNetworkFunction(data),
+          n: dataProcessingModel.getPredictedX(data), //n表示要被预测的值，根据data获得
           data: data,
           // fittedData: [],
           // fittingDegree: null,

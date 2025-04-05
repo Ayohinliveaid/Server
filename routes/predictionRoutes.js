@@ -14,9 +14,9 @@ predictionRouter.post(
   predictionController.polynomialRegressionPredict
 );
 predictionRouter.post(
-  "/bestFittingModelPredict",
+  "/optimizedPolynomialRegressionPredict",
   // userMiddlewares.authenticateToken,
-  predictionController.bestFittingModelPredict
+  predictionController.optimizedPolynomialRegressionPredict
 );
 
 predictionRouter.post(

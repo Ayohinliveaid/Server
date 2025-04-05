@@ -53,11 +53,15 @@ const polynomialRegressionFunction = (data, degree) => {
   const XTY = math.multiply(XT, yMatrix);
   const coefficients = math.multiply(XTX_inv, XTY);
 
-  return (x) => {
-    const y = coefficients.valueOf().reduce((sum, v, i) => {
-      return sum + v * Math.pow(x, i);
-    }, 0);
-    return y;
+  //函数与非线性预测统一成输入数组，返回数组
+  return (inputArr) => {
+    // console.log("inputArr", inputArr);
+    outputArr = inputArr.map((x) => {
+      return coefficients.valueOf().reduce((sum, v, i) => {
+        return sum + v * Math.pow(x, i);
+      }, 0);
+    });
+    return outputArr;
   };
 };
 
@@ -203,12 +207,12 @@ const SVMRegression = (data) => {
     gamma: 10, // 降低 gamma
   });
   svm.train(normalizedInputs, normalizedOutputs);
-  console.log(
-    "训练数据input",
-    normalizedInputs,
-    "训练数据output",
-    normalizedOutputs
-  );
+  // console.log(
+  //   "训练数据input",
+  //   normalizedInputs,
+  //   "训练数据output",
+  //   normalizedOutputs
+  // );
 
   return {
     func: (inputArr) => {
@@ -216,7 +220,7 @@ const SVMRegression = (data) => {
       if (!Array.isArray(inputArr[0])) {
         inputArr = inputArr.map((v) => [v]);
       }
-      console.log("inputArr:", inputArr);
+      // console.log("inputArr:", inputArr);
       const normalizedInput = dataProcessingModel
         .normalizedObject(inputArr, inputMin, inputMax)
         .normalizedResult.map((v) => [v]);

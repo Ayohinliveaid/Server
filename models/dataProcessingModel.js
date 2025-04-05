@@ -289,7 +289,7 @@ const getPredictedX = (data, isARIMA = 0) => {
     const predictedX = [];
     avarageGap = (data[dataN - 1].x - data[0].x) / (dataN - 1);
     for (let i = 1; i <= n; i++) {
-      predictedX.push(data[dataN - 1].x + (i + 1) * avarageGap);
+      predictedX.push(data[dataN - 1].x + i * avarageGap);
     }
     return predictedX;
   }
