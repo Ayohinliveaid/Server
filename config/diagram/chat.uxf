@@ -1,1 +1,48 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level></diagram>
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>270</x><y>10</y><w>450</w><h>150</h></coordinates><panel_attributes>ChatModel
+--
++ saveChatToChatHistory(chat: Object, user: Object ): Promise
++ saveChatToSavedChats(chat: Object, user: Object ): Promise
++ getChatHistory(chat: Object, state: Number): Promise
++ getSavedChats(user: Object ): Promise
++ deleteChatFromSavedChats(user: Object ): Promise
++ deleteChatFromChatHistory(chat: Object): Promise
++ updateSavedState(chat: Object): Promise
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>50</y><w>210</w><h>140</h></coordinates><panel_attributes>ChatController
+--
++ saveTheChat()
++ deleteTheChat()
++ updateChatHistory()
++ getChatHistroy()
++ getSavedChats()
++ getResponse()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>280</x><y>310</y><w>210</w><h>100</h></coordinates><panel_attributes>AIModel
+--
++ configFromDS()
++ descriptionFromDS()
++ dimensionFromDS()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>280</x><y>200</y><w>210</w><h>60</h></coordinates><panel_attributes>PropertyModel
+--
++ requestRealtorAPI()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>320</y><w>210</w><h>280</h></coordinates><panel_attributes>DataProcessingModel
+--
++ simplifyObj()
++ getKeys()
++ flattenObject()
++ DFS()
++ BFS()
++ search()
++ mappedData()
++ getChildAndParent()
++ pearsonCorrelation()
++ ljungBoxTest()
++ getPredictedX()
++ arrConcatenatedData()
++ normalizedTensor()
++ normalizedObject()
++ denormalizedObject()
++ convertProps()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>570</x><y>200</y><w>210</w><h>60</h></coordinates><panel_attributes>database
+--
++ connection
+
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>
