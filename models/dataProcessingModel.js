@@ -319,8 +319,8 @@ const arrConcatenatedData = (data, arr, n = null) => {
   }
 
   const newData = data.concat(objectArr);
-  const originData = convertProps(data).origin(newData);
-  return originData;
+  // const originData = convertProps(data).origin(newData);
+  return newData;
 };
 
 // 将数组转为归一化的张量，输入二维数组或者一维数组

@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>270</x><y>10</y><w>450</w><h>150</h></coordinates><panel_attributes>ChatModel
+<diagram program="umletino" version="15.1"><zoom_level>6</zoom_level><element><id>UMLClass</id><coordinates><x>518</x><y>72</y><w>222</w><h>90</h></coordinates><panel_attributes>ChatModel
 --
 + saveChatToChatHistory(chat: Object, user: Object ): Promise
 + saveChatToSavedChats(chat: Object, user: Object ): Promise
@@ -7,7 +7,7 @@
 + deleteChatFromSavedChats(user: Object ): Promise
 + deleteChatFromChatHistory(chat: Object): Promise
 + updateSavedState(chat: Object): Promise
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>50</y><w>210</w><h>140</h></coordinates><panel_attributes>ChatController
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>194</x><y>144</y><w>126</w><h>84</h></coordinates><panel_attributes>ChatController
 --
 + saveTheChat()
 + deleteTheChat()
@@ -15,34 +15,53 @@
 + getChatHistroy()
 + getSavedChats()
 + getResponse()
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>280</x><y>310</y><w>210</w><h>100</h></coordinates><panel_attributes>AIModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>572</x><y>276</y><w>126</w><h>150</h></coordinates><panel_attributes>AIModel
 --
-+ configFromDS()
-+ descriptionFromDS()
-+ dimensionFromDS()
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>280</x><y>200</y><w>210</w><h>60</h></coordinates><panel_attributes>PropertyModel
+- openai: Object  
+- paramList: Array  
+- stateCode: Object  
+- standardResponse: Object  
+- messageOfStateCode: Array  
+- standardConfig: Object  
+- standardDimension: Object  
+- messagesOfConfig: Array  
+- messagesOfDescription: Array  
+- messageOfDimension: Array  
 --
-+ requestRealtorAPI()
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>320</y><w>210</w><h>280</h></coordinates><panel_attributes>DataProcessingModel
++ configFromDS(text: string): Promise
++ descriptionFromDS(data: Object, text: string): Promise
++ dimensionFromDS(llist: string, text: string): Promise
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>554</x><y>204</y><w>162</w><h>36</h></coordinates><panel_attributes>PropertyModel
 --
-+ simplifyObj()
-+ getKeys()
-+ flattenObject()
-+ DFS()
-+ BFS()
-+ search()
-+ mappedData()
-+ getChildAndParent()
-+ pearsonCorrelation()
-+ ljungBoxTest()
-+ getPredictedX()
-+ arrConcatenatedData()
-+ normalizedTensor()
-+ normalizedObject()
-+ denormalizedObject()
-+ convertProps()
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>570</x><y>200</y><w>210</w><h>60</h></coordinates><panel_attributes>database
++ requestRealtorAPI(config: Object): Promise
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>206</x><y>390</y><w>300</w><h>240</h></coordinates><panel_attributes>DataProcessingModel
+--
++ simplifyObj(obj: Object): Object
++ flattenObject(obj: Object, parentKey: string = ""): Object
++ getKeys(obj: Object): Array
++ getChildAndParent(str: String): Object
++ DFS(obj: Object, key: String): Any
++ BFS(obj: Object, key: String): Any
++ search(obj: Object, key: string, parent: string = key)
++ mappedData(data: Object,
+x: string,y: string,
+z:string = null,
+xParent:string = x,
+yParent:string = y, 
+zParent:string = z): Array
+
++ pearsonCorrelation(data: Object): boolean
++ autocorrelation = (series: Array, lag: number): Number
++ getChiSquaredCriticalValue(df: Number, alpha: Number): Number
++ ljungBoxTest(data: Object, maxLag: number): boolean
++ getPredictedX(data: Object, isARIMA: boolean = 0): number | number[]
++ arrConcatenatedData(data: Array, arr: Array, n: number= null): Array
++ normalizedTensor(arr: Array, min: number = null, max: number = null): Object
++ normalizedObject(arr: Array, min: number  = null, max: number = null): Object
++ denormalizedObject(normalizedObject: Object, min: number , max: number ): Array
++ convertProps(data: Array): Object
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>812</x><y>102</y><w>126</w><h>36</h></coordinates><panel_attributes>database
 --
 + connection
 
-</panel_attributes><additional_attributes></additional_attributes></element></diagram>
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>734</x><y>114</y><w>90</w><h>18</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>314</x><y>162</y><w>72</w><h>240</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>100;380;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>314</x><y>102</y><w>216</w><h>78</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>340;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>314</x><y>162</y><w>252</w><h>78</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>400;110;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>314</x><y>162</y><w>270</w><h>180</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>430;280;10;10</additional_attributes></element></diagram>

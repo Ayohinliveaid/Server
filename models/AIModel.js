@@ -163,12 +163,12 @@ const descriptionFromDS = (data, question) => {
 };
 
 //接受数据作为输入，输出对数据的描述。处理数据，生成自然语言。
-const dimensionFromDS = (list, question) => {
+const dimensionFromDS = (list, text) => {
   const newMessages = {
     role: "user",
     // content: JSON.stringify(data),
-    // content: typeof question === "string" ? data : JSON.stringify(data), // Only stringify objects
-    content: question + JSON.stringify(list),
+    // content: typeof text === "string" ? data : JSON.stringify(data), // Only stringify objects
+    content: text + JSON.stringify(list),
   };
   return new Promise((resolve, reject) => {
     openai.chat.completions
