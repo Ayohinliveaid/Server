@@ -1,1 +1,61 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level></diagram>
+<diagram program="umletino" version="15.1"><zoom_level>2</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>199</x><y>422</y><w>100</w><h>80</h></coordinates><panel_attributes>DataProcessingModel
+--
++ simplifyObj(obj: Object): Object
++ flattenObject(obj: Object, parentKey: string = ""): Object
++ getKeys(obj: Object): Array
++ getChildAndParent(str: String): Object
++ DFS(obj: Object, key: String): Any
++ BFS(obj: Object, key: String): Any
++ search(obj: Object, key: string, parent: string = key)
++ mappedData(data: Object,
+x: string,y: string,
+z:string = null,
+xParent:string = x,
+yParent:string = y, 
+zParent:string = z): Array
+
++ pearsonCorrelation(data: Object): boolean
++ autocorrelation = (series: Array, lag: number): Number
++ getChiSquaredCriticalValue(df: Number, alpha: Number): Number
++ ljungBoxTest(data: Object, maxLag: number): boolean
++ getPredictedX(data: Object, isARIMA: boolean = 0): number | number[]
++ arrConcatenatedData(data: Array, arr: Array, n: number= null): Array
++ normalizedTensor(arr: Array, min: number = null, max: number = null): Object
++ normalizedObject(arr: Array, min: number  = null, max: number = null): Object
++ denormalizedObject(normalizedObject: Object, min: number , max: number ): Array
++ convertProps(data: Array): Object
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>33</x><y>190</y><w>94</w><h>32</h></coordinates><panel_attributes>PredictionController
+--
++ linearRegressionPredict(req: Request, res: Response): Response
++ polynomialRegressionPredict(req: Request, res: Response): Response
++ ARIMAPredict(req: Request, res: Response): Response
++ optimizedARIMAPredict(req: Request, res: Response): Response
++ SVMRegressionPredict(req: Request, res: Response): Response
++ optimizedPredict(req: Request, res: Response): Response
++ BPNetworkPredict(req: Request, res: Response): Response</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>657</x><y>398</y><w>100</w><h>40</h></coordinates><panel_attributes>PredictionModel
+--
++ linearRegressionFunction(data: Object): (x: number) =&gt; number
++ polynomialRegressionFunction = (data: Array, degree: number): (inputArr: Array) =&gt; Array
++ ARIMAFunction(data: Array, p:number = 4, d:number = 4, q:number = 2): Object
++ SVMRegression(data: Object): Object
++ BPNetworkFunction(data: Array, epochs:number = 4, d:hiddenUnits = 4, degree:number ):(inputArr: Array) =&gt; Array
+
+
+
+
+
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>623</x><y>146</y><w>100</w><h>20</h></coordinates><panel_attributes>SelectionModel
+--
+- bestFittingModel(data: Array): Object
+- optimizedARIMAModel = (data: Array): Object
++ optimizedModel(data: Array): Object
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>379</x><y>30</y><w>100</w><h>26</h></coordinates><panel_attributes>EvaluationModel
+--
+- MSE(realData: Array, fittedData: Array): number
+- R2(realData: Array, fittedData: Array string = ""): number
+- underfittingDegree(realData: Array, fittedData: Array,  portion: number = 0.5): number
+- AIC(realData: Array, fittedData: Array,  k: number): number
++ fittingDegree(realData: Array, fittedData: Array, k: number, portion: number = 0.5): number</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>125</x><y>220</y><w>536</w><h>182</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>2660;890;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>125</x><y>164</y><w>502</w><h>62</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>2490;10;10;290</additional_attributes></element><element><id>Relation</id><coordinates><x>125</x><y>54</y><w>288</w><h>172</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>1420;10;10;840</additional_attributes></element><element><id>Relation</id><coordinates><x>125</x><y>220</y><w>130</w><h>206</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>630;1010;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>281</x><y>396</y><w>380</w><h>30</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;130;1880;10</additional_attributes></element><element><id>Relation</id><coordinates><x>621</x><y>164</y><w>40</w><h>238</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>180;1170;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>415</x><y>54</y><w>212</w><h>104</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;1040;500</additional_attributes></element><element><id>Relation</id><coordinates><x>265</x><y>164</y><w>362</w><h>262</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;1290;1790;10</additional_attributes></element></diagram>

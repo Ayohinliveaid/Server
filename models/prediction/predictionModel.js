@@ -99,6 +99,60 @@ const ARIMAFunction = (data, p = 4, d = 4, q = 2) => {
   };
 };
 
+//支持向量机回归模型
+const SVMRegression = (data) => {
+  const xArr = data.map((v) => [v.x]);
+  console.log("xArr:", xArr);
+  const yArr = data.map((v) => v.y);
+  let {
+    normalizedResult: normalizedInputs,
+    min: inputMin,
+    max: inputMax,
+  } = dataProcessingModel.normalizedObject(xArr);
+  normalizedInputs = normalizedInputs.map((v) => [v]);
+  const {
+    normalizedResult: normalizedOutputs,
+    min: outputMin,
+    max: outputMax,
+  } = dataProcessingModel.normalizedObject(yArr);
+
+  const svm = new SVM({
+    type: SVM.SVM_TYPES.EPSILON_SVR,
+    kernel: SVM.KERNEL_TYPES.RBF,
+    cost: 1.0, // 降低 C 值
+    epsilon: 0.0001, // 根据 y 的尺度调整
+    gamma: 10, // 降低 gamma
+  });
+  svm.train(normalizedInputs, normalizedOutputs);
+  // console.log(
+  //   "训练数据input",
+  //   normalizedInputs,
+  //   "训练数据output",
+  //   normalizedOutputs
+  // );
+
+  return {
+    func: (inputArr) => {
+      //按照svm要求，将一维元素数组转化为向量数组
+      if (!Array.isArray(inputArr[0])) {
+        inputArr = inputArr.map((v) => [v]);
+      }
+      // console.log("inputArr:", inputArr);
+      const normalizedInput = dataProcessingModel
+        .normalizedObject(inputArr, inputMin, inputMax)
+        .normalizedResult.map((v) => [v]);
+      const predictedResult = svm.predict(normalizedInput);
+      const denormalizedResult = dataProcessingModel.denormalizedObject(
+        predictedResult,
+        outputMin,
+        outputMax
+      );
+      return denormalizedResult;
+    },
+    free: () => svm.free(), // 让外部决定何时释放
+  };
+};
+
 //反向传播机器学习模型，输入数据，返回预测函数
 const BPNetworkFunction = async (
   data,
@@ -181,60 +235,6 @@ const BPNetworkFunction = async (
 //     return Array.from({ length: degree }, (_, i) => Math.pow(x, i + 1));
 //   });
 // };
-
-//支持向量机回归模型
-const SVMRegression = (data) => {
-  const xArr = data.map((v) => [v.x]);
-  console.log("xArr:", xArr);
-  const yArr = data.map((v) => v.y);
-  let {
-    normalizedResult: normalizedInputs,
-    min: inputMin,
-    max: inputMax,
-  } = dataProcessingModel.normalizedObject(xArr);
-  normalizedInputs = normalizedInputs.map((v) => [v]);
-  const {
-    normalizedResult: normalizedOutputs,
-    min: outputMin,
-    max: outputMax,
-  } = dataProcessingModel.normalizedObject(yArr);
-
-  const svm = new SVM({
-    type: SVM.SVM_TYPES.EPSILON_SVR,
-    kernel: SVM.KERNEL_TYPES.RBF,
-    cost: 1.0, // 降低 C 值
-    epsilon: 0.0001, // 根据 y 的尺度调整
-    gamma: 10, // 降低 gamma
-  });
-  svm.train(normalizedInputs, normalizedOutputs);
-  // console.log(
-  //   "训练数据input",
-  //   normalizedInputs,
-  //   "训练数据output",
-  //   normalizedOutputs
-  // );
-
-  return {
-    func: (inputArr) => {
-      //按照svm要求，将一维元素数组转化为向量数组
-      if (!Array.isArray(inputArr[0])) {
-        inputArr = inputArr.map((v) => [v]);
-      }
-      // console.log("inputArr:", inputArr);
-      const normalizedInput = dataProcessingModel
-        .normalizedObject(inputArr, inputMin, inputMax)
-        .normalizedResult.map((v) => [v]);
-      const predictedResult = svm.predict(normalizedInput);
-      const denormalizedResult = dataProcessingModel.denormalizedObject(
-        predictedResult,
-        outputMin,
-        outputMax
-      );
-      return denormalizedResult;
-    },
-    free: () => svm.free(), // 让外部决定何时释放
-  };
-};
 
 module.exports = {
   linearRegressionFunction,

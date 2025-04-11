@@ -5,7 +5,7 @@
 + generateToken()
 </panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>40</x><y>50</y><w>210</w><h>80</h></coordinates><panel_attributes>UserController
 --
-+ login()
-+ signup()
++ login(): Response
++ signup(): Response
 
 </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>250</x><y>80</y><w>210</w><h>30</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>190;10;10;10</additional_attributes></element></diagram>
