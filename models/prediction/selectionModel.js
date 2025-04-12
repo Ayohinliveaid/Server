@@ -8,8 +8,8 @@ const { json } = require("express");
 
 //调用评价模型，对各个预测方法生成的拟合数据进行评分，
 
-//bestFittingModel表示多项式回归最佳模型
-const bestFittingModel = (data) => {
+//optimizedPolynomialRegressionModel表示多项式回归最佳模型
+const optimizedPolynomialRegressionModel = (data) => {
   //首先调用测试模型中所有预测方法，生成相应的拟合数据，具体来说，是多项式回归的方法中，使用不同的方法作为项数
   const degrees = [...Array(4)].map((v, i) => i + 1); //多项式回归，项数的范围
 
@@ -119,7 +119,7 @@ const optimizedModel = async (data) => {
     let islinear = dataProcessingModel.pearsonCorrelation(data);
     if (islinear) {
       console.log("线性强，使用多项式回归模型");
-      return bestFittingModel(data);
+      return optimizedPolynomialRegressionModel(data);
     } else {
       if (data.length < 500) {
         // console.log("哈哈，进入了data.length < 500的分支");
@@ -163,4 +163,8 @@ const optimizedModel = async (data) => {
 // ];
 // optimizedModel(data, 1); // 示例数据
 
-module.exports = { bestFittingModel, optimizedARIMAModel, optimizedModel };
+module.exports = {
+  optimizedPolynomialRegressionModel,
+  optimizedARIMAModel,
+  optimizedModel,
+};

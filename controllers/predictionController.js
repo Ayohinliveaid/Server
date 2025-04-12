@@ -54,9 +54,13 @@ const optimizedPolynomialRegressionPredict = (req, res) => {
     let xyData = convertProps.xy();
     const n = dataProcessingModel.getPredictedX(xyData);
     console.log("n", n);
-    const bestFittingModel = selectionModel.bestFittingModel(xyData);
-    console.log("bestFittingModel", bestFittingModel);
-    const func = bestFittingModel.func;
+    const optimizedPolynomialRegressionModel =
+      selectionModel.optimizedPolynomialRegressionModel(xyData);
+    console.log(
+      "optimizedPolynomialRegressionModel",
+      optimizedPolynomialRegressionModel
+    );
+    const func = optimizedPolynomialRegressionModel.func;
     const predictedArr = func(n);
     console.log("predictedArr", predictedArr);
     const newData = dataProcessingModel.arrConcatenatedData(

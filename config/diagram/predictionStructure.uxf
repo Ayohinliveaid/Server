@@ -48,7 +48,7 @@ zParent:string = z): Array
 
 </panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>590</x><y>174</y><w>100</w><h>20</h></coordinates><panel_attributes>SelectionModel
 --
-- bestFittingModel(data: Array): Object
+- optimizedPolynomialRegressionModel(data: Array): Object
 - optimizedARIMAModel = (data: Array): Object
 + optimizedModel(data: Array): Object
 
