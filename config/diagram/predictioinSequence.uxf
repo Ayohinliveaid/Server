@@ -97,8 +97,6 @@ style=wordwrap</panel_attributes><additional_attributes></additional_attributes>
 
 style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>690</x><y>280</y><w>110</w><h>50</h></coordinates><panel_attributes>返回数据
 
-style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>930</x><y>30</y><w>30</w><h>1100</h></coordinates><panel_attributes>lt=.
-group=group-2</panel_attributes><additional_attributes>10;10;10;1080</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>890</x><y>10</y><w>100</w><h>30</h></coordinates><panel_attributes>PropertyModel
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>930</x><y>30</y><w>30</w><h>1100</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;1080</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>890</x><y>10</y><w>100</w><h>30</h></coordinates><panel_attributes>EvaluationModel
 
-
-group=group-2</panel_attributes><additional_attributes></additional_attributes></element></diagram>
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>
