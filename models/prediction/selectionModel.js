@@ -2,7 +2,6 @@
 
 const predictionModel = require("./predictionModel");
 const evaluationModel = require("./evaluationModel");
-const propertyModel = require("../propertyModel");
 const dataProcessingModel = require("../dataProcessingModel");
 const { json } = require("express");
 
@@ -29,6 +28,11 @@ const optimizedPolynomialRegressionModel = (data) => {
     v.fittedData = v.data.map((value, i) => {
       return { x: value.x, y: v.func(v.data.map((v) => v.x))[i] };
     });
+    v.fittingDegree = evaluationModel.fittingDegree(
+      v.data,
+      v.fittedData,
+      v.degree
+    );
   });
 
   //选出最好的模型，目前仅仅从多项式回归选择，也就是仅仅选择多项式项数

@@ -60,16 +60,17 @@ const optimizedPolynomialRegressionPredict = (req, res) => {
       "optimizedPolynomialRegressionModel",
       optimizedPolynomialRegressionModel
     );
-    const func = optimizedPolynomialRegressionModel.func;
-    const predictedArr = func(n);
-    console.log("predictedArr", predictedArr);
-    const newData = dataProcessingModel.arrConcatenatedData(
-      xyData,
-      predictedArr,
-      n
-    );
-    const originData = convertProps.origin(newData);
-    return res.status(200).json(originData);
+    // const func = optimizedPolynomialRegressionModel.func;
+    // const predictedArr = func(n);
+    // console.log("predictedArr", predictedArr);
+    // const newData = dataProcessingModel.arrConcatenatedData(
+    //   xyData,
+    //   predictedArr,
+    //   n
+    // );
+    // const originData = convertProps.origin(newData);
+    // return res.status(200).json(originData);
+    return res.status(200).json("haha");
   }
 };
 

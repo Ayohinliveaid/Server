@@ -1,4 +1,5 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>Relation</id><coordinates><x>800</x><y>30</y><w>30</w><h>1100</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;1080</additional_attributes></element><element><id>Text</id><coordinates><x>530</x><y>170</y><w>110</w><h>50</h></coordinates><panel_attributes>返回数据API配置
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>Relation</id><coordinates><x>800</x><y>30</y><w>30</w><h>1100</h></coordinates><panel_attributes>lt=.
+group=group-1</panel_attributes><additional_attributes>10;10;10;1080</additional_attributes></element><element><id>Text</id><coordinates><x>530</x><y>170</y><w>110</w><h>50</h></coordinates><panel_attributes>返回数据API配置
 
 style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>510</x><y>320</y><w>90</w><h>60</h></coordinates><panel_attributes>抽象数据结构
 
@@ -52,9 +53,10 @@ style=wordwrap</panel_attributes><additional_attributes></additional_attributes>
 style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>500</x><y>150</y><w>190</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>170;10;10;10</additional_attributes></element><element><id>Text</id><coordinates><x>520</x><y>140</y><w>110</w><h>40</h></coordinates><panel_attributes>获取数据API配置
 
 style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>670</x><y>160</y><w>20</w><h>30</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>0</x><y>10</y><w>100</w><h>30</h></coordinates><panel_attributes>User
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>30</x><y>30</y><w>30</w><h>1190</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;1170</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>760</x><y>10</y><w>100</w><h>30</h></coordinates><panel_attributes>PropertyModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>30</x><y>30</y><w>30</w><h>1190</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;1170</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>760</x><y>10</y><w>100</w><h>30</h></coordinates><panel_attributes>PredictionModel
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>800</x><y>270</y><w>20</w><h>30</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>360</x><y>120</y><w>150</w><h>30</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>Text</id><coordinates><x>390</x><y>110</y><w>90</w><h>50</h></coordinates><panel_attributes>回复当前进度
+
+group=group-1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>800</x><y>270</y><w>20</w><h>30</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>360</x><y>120</y><w>150</w><h>30</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>Text</id><coordinates><x>390</x><y>110</y><w>90</w><h>50</h></coordinates><panel_attributes>回复当前进度
 
 style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>500</x><y>260</y><w>320</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>300;10;10;10</additional_attributes></element><element><id>Text</id><coordinates><x>530</x><y>250</y><w>110</w><h>40</h></coordinates><panel_attributes>请求数据
 
@@ -95,4 +97,8 @@ style=wordwrap</panel_attributes><additional_attributes></additional_attributes>
 
 style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>690</x><y>280</y><w>110</w><h>50</h></coordinates><panel_attributes>返回数据
 
-style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element></diagram>
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>930</x><y>30</y><w>30</w><h>1100</h></coordinates><panel_attributes>lt=.
+group=group-2</panel_attributes><additional_attributes>10;10;10;1080</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>890</x><y>10</y><w>100</w><h>30</h></coordinates><panel_attributes>PropertyModel
+
+
+group=group-2</panel_attributes><additional_attributes></additional_attributes></element></diagram>
