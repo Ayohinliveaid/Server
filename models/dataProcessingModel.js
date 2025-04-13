@@ -70,7 +70,7 @@ const DFS = (obj, key) => {
   for (let v of keys) {
     if (typeof obj[v] == "object" && obj[v] != null) {
       const result = DFS(obj[v], key);
-      if (result != "haha") {
+      if (result != "DFS now found") {
         return result;
       }
     } else {
@@ -79,7 +79,7 @@ const DFS = (obj, key) => {
       }
     }
   }
-  return "haha";
+  return "DFS now found";
 };
 
 const BFS = (obj, key) => {
@@ -114,7 +114,7 @@ const search = (obj, key, parent = key) => {
     // 如果当前对象是数组，则将其中的每一个元素加入队列
     if (Array.isArray(current)) {
       queue.push(...current);
-    } else if (typeof current == "object" && current != null) {
+    } else if (typeof current == "object" && current != "search not found") {
       // 如果当前对象是普通对象，则遍历它的键值对
       const keys = Object.keys(current);
       for (let v of keys) {
@@ -128,7 +128,7 @@ const search = (obj, key, parent = key) => {
       }
     }
   }
-  return null; // 如果队列遍历完还没找到，返回未找到信息
+  return "search not found"; // 如果队列遍历完还没找到，返回未找到信息
 };
 //接口请求到数据后，映射为xyz坐标，进而可以在antv中展示。参数表示xyz需要映射的元素，对应parent表示快速查找的父级元素名称
 const mappedData = (
