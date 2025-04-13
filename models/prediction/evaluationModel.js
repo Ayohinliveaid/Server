@@ -23,7 +23,7 @@ const R2 = (realData, fittedData) => {
   }
 };
 
-//综合“欠拟合”程度，输入一个比例，综合均方误差和决定系数，越大表示越欠拟合
+//综合“欠拟合”程度，输入一个比例，综合均方误差和决定系数，越大表示越欠拟合，越低越好
 const underfittingDegree = (realData, fittedData, portion = 0.5) => {
   const result =
     MSE(realData, fittedData) * portion -
@@ -31,38 +31,51 @@ const underfittingDegree = (realData, fittedData, portion = 0.5) => {
   return result;
 };
 
-//计算赤池信息法则值，避免过拟合，越低于好。计算模型的参数个数 k，对应多项式回归中的项数。
+// //计算赤池信息法则值，避免过拟合，越低越好。计算模型的参数个数 k，对应多项式回归中的项数。
+// const AIC = (realData, fittedData, k) => {
+//   // 1. 计算残差平方和
+//   if (MSE(realData, fittedData) == 0) {
+//     const residualSumOfSquares = MSE(realData, fittedData) * realData.length;
+//     const epsilon = 1e-10;
+//     const safeRSS = Math.max(residualSumOfSquares, epsilon);
+//     const L =
+//       (-realData.length / 2) *
+//         Math.log((2 * Math.PI * safeRSS) / realData.length) -
+//       safeRSS / (2 * Math.pow(realData.length, 2));
+
+//     return 2 * k - 2 * Math.log(L);
+//   } else {
+//     const residualSumOfSquares = MSE(realData, fittedData) * realData.length;
+
+//     //似然函数
+//     const L =
+//       (-realData.length / 2) *
+//         Math.log((2 * Math.PI * residualSumOfSquares) / realData.length) -
+//       residualSumOfSquares / (2 * Math.pow(realData.length, 2));
+
+//     // const L =
+//     //   (-realData.length / 2) *
+//     //     Math.log((2 * Math.PI * safeRSS) / realData.length) -
+//     //   safeRSS / (2 * Math.pow(realData.length, 2));
+
+//     // const safeL = Math.max(Math.abs(L), 1e-10); // 避免log为负数
+//     const safeL = Math.max(L, 1e10); // 确保 L 不会过小，避免 log(负数)
+//     const result = 2 * k - 2 * Math.log(safeL);
+//     return result;
+//   }
+// };
+
+//计算简化版赤池信息法则公式
 const AIC = (realData, fittedData, k) => {
-  // 1. 计算残差平方和
-  if (MSE(realData, fittedData) == 0) {
-    const residualSumOfSquares = MSE(realData, fittedData) * realData.length;
-    const epsilon = 1e-10;
-    const safeRSS = Math.max(residualSumOfSquares, epsilon);
-    const L =
-      (-realData.length / 2) *
-        Math.log((2 * Math.PI * safeRSS) / realData.length) -
-      safeRSS / (2 * Math.pow(realData.length, 2));
+  // 计算残差平方和 (RSS)
+  const residualSumOfSquares = realData.reduce((sum, y_i, index) => {
+    const y_hat_i = fittedData[index];
+    return sum + Math.pow(y_i.y - y_hat_i.y, 2);
+  }, 0);
 
-    return 2 * k - 2 * Math.log(L);
-  } else {
-    const residualSumOfSquares = MSE(realData, fittedData) * realData.length;
+  const result = 2 * k + residualSumOfSquares;
 
-    //似然函数
-    const L =
-      (-realData.length / 2) *
-        Math.log((2 * Math.PI * residualSumOfSquares) / realData.length) -
-      residualSumOfSquares / (2 * Math.pow(realData.length, 2));
-
-    // const L =
-    //   (-realData.length / 2) *
-    //     Math.log((2 * Math.PI * safeRSS) / realData.length) -
-    //   safeRSS / (2 * Math.pow(realData.length, 2));
-
-    // const safeL = Math.max(Math.abs(L), 1e-10); // 避免log为负数
-    const safeL = Math.max(L, 1e10); // 确保 L 不会过小，避免 log(负数)
-    const result = 2 * k - 2 * Math.log(safeL);
-    return result;
-  }
+  return result;
 };
 
 //综合拟合程度，对欠拟合程度和过拟合程度进行加权平均，越高越好
