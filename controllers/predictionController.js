@@ -113,9 +113,9 @@ const ARIMAPredict = (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const n = dataProcessingModel.getPredictedX(data, 1);
     const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
+    const n = dataProcessingModel.getPredictedX(xyData, 1);
     const func = predictionModel.ARIMAFunction(xyData).func;
     // const stationary = predictionModel.ARIMAFunction(xyData).stationary;
     //返回和data的{x,y}相同的格式
@@ -138,9 +138,9 @@ const optimizedARIMAPredict = (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
-    const n = dataProcessingModel.getPredictedX(data, 1);
     const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
+    const n = dataProcessingModel.getPredictedX(xyData, 1);
     const func = selectionModel.optimizedARIMAModel(data).func;
     // const list = selectionModel.optimizedARIMAModel(xyData);
     //返回和data的{x,y}相同的格式
@@ -161,18 +161,22 @@ const BPNetworkPredict = async (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在空数组，引发错误");
   } else {
-    let n = dataProcessingModel.getPredictedX(data);
     const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
-    console.log("xyData", xyData);
+    let n = dataProcessingModel.getPredictedX(xyData);
+    console.log("n", n);
+    // console.log("xyData", xyData);
     const func = await predictionModel.BPNetworkFunction(xyData, 200, 100);
     //返回和data的{x,y}相同的格式
     const predictedArr = await func(n);
+    console.log("predictedArr", predictedArr);
     const newData = dataProcessingModel.arrConcatenatedData(
       xyData,
       predictedArr,
       n
     );
+    console.log("newData", newData);
+
     const originData = convertProps.origin(newData);
     return res.status(200).json(originData);
   }

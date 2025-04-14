@@ -160,6 +160,7 @@ const BPNetworkFunction = async (
   hiddenUnits = 100,
   degree = 3
 ) => {
+  data = data.filter((v) => v.x != null && v.y != null);
   //对数据进行处理，转化为张量并归一化
   const xArr = data.map((v) => v.x);
   const yArr = data.map((v) => v.y);
@@ -203,7 +204,7 @@ const BPNetworkFunction = async (
     shuffle: true,
     callbacks: {
       onEpochEnd: (epoch, logs) => {
-        console.log(`Epoch ${epoch + 1}: Loss = ${logs.loss}`);
+        // console.log(`Epoch ${epoch + 1}: Loss = ${logs.loss}`);
       },
     },
   });

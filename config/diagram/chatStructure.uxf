@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>1</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>645</x><y>339</y><w>37</w><h>15</h></coordinates><panel_attributes>ChatModel
+<diagram program="umletino" version="15.1"><zoom_level>9</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>836</x><y>319</y><w>333</w><h>135</h></coordinates><panel_attributes>ChatModel
 --
 + saveChatToChatHistory(chat: Object, user: Object ): Promise
 + saveChatToSavedChats(chat: Object, user: Object ): Promise
@@ -7,7 +7,7 @@
 + deleteChatFromSavedChats(user: Object ): Promise
 + deleteChatFromChatHistory(chat: Object): Promise
 + updateSavedState(chat: Object): Promise
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>578</x><y>328</y><w>35</w><h>14</h></coordinates><panel_attributes>ChatController
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>62</x><y>247</y><w>315</w><h>126</h></coordinates><panel_attributes>ChatController
 --
 + saveTheChat(req: Request, res: Response): Response
 + deleteTheChat(req: Request, res: Response): Response
@@ -15,7 +15,7 @@
 + getChatHistroy(req: Request, res: Response): Response
 + getSavedChats(req: Request, res: Response): Response
 + getResponse(req: Request, res: Response): Response
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>653</x><y>299</y><w>21</w><h>25</h></coordinates><panel_attributes>AIModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>818</x><y>4</y><w>189</w><h>225</h></coordinates><panel_attributes>AIModel
 --
 - openai: Object  
 - paramList: Array  
@@ -31,10 +31,10 @@
 + configFromDS(text: string): Promise
 + descriptionFromDS(data: Object, text: string): Promise
 + dimensionFromDS(llist: string, text: string): Promise
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>651</x><y>328</y><w>27</w><h>6</h></coordinates><panel_attributes>PropertyModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>953</x><y>247</y><w>243</w><h>54</h></coordinates><panel_attributes>PropertyModel
 --
 + requestRealtorAPI(config: Object): Promise
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>597</x><y>359</y><w>50</w><h>40</h></coordinates><panel_attributes>DataProcessingModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>323</x><y>400</y><w>450</w><h>360</h></coordinates><panel_attributes>DataProcessingModel
 --
 + simplifyObj(obj: Object): Object
 + flattenObject(obj: Object, parentKey: string = ""): Object
@@ -60,8 +60,8 @@ zParent:string = z): Array
 + normalizedObject(arr: Array, min: number  = null, max: number = null): Object
 + denormalizedObject(normalizedObject: Object, min: number , max: number ): Array
 + convertProps(data: Array): Object
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>658</x><y>367</y><w>21</w><h>6</h></coordinates><panel_attributes>database
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1007</x><y>490</y><w>189</w><h>54</h></coordinates><panel_attributes>database
 --
 + connection
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>662</x><y>353</y><w>8</w><h>16</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>60;140;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>612</x><y>331</y><w>12</w><h>30</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>100;280;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>612</x><y>331</y><w>35</w><h>17</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>330;150;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>612</x><y>331</y><w>41</w><h>3</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>390;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>612</x><y>311</y><w>43</w><h>23</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>410;10;10;210</additional_attributes></element></diagram>
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>989</x><y>445</y><w>126</w><h>63</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>120;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>368</x><y>274</y><w>198</w><h>144</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>200;140;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>368</x><y>274</y><w>486</w><h>126</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>520;120;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>368</x><y>274</y><w>603</w><h>27</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>650;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>368</x><y>112</y><w>468</w><h>189</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>500;10;10;190</additional_attributes></element></diagram>
