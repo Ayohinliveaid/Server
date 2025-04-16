@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>129</x><y>366</y><w>500</w><h>400</h></coordinates><panel_attributes>DataProcessingModel
+<diagram program="umletino" version="15.1"><zoom_level>11</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>100</x><y>323</y><w>550</w><h>440</h></coordinates><panel_attributes>DataProcessingModel
 --
 + simplifyObj(obj: Object): Object
 + flattenObject(obj: Object, parentKey: string = ""): Object
@@ -24,7 +24,7 @@ zParent:string = z): Array
 + normalizedObject(arr: Array, min: number  = null, max: number = null): Object
 + denormalizedObject(normalizedObject: Object, min: number , max: number ): Array
 + convertProps(data: Array): Object
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>29</x><y>156</y><w>470</w><h>160</h></coordinates><panel_attributes>PredictionController
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>89</x><y>114</y><w>462</w><h>165</h></coordinates><panel_attributes>PredictionController
 --
 + linearRegressionPredict(req: Request, res: Response): Response
 + polynomialRegressionPredict(req: Request, res: Response): Response
@@ -32,13 +32,14 @@ zParent:string = z): Array
 + optimizedARIMAPredict(req: Request, res: Response): Response
 + SVMRegressionPredict(req: Request, res: Response): Response
 + optimizedPredict(req: Request, res: Response): Response
-+ BPNetworkPredict(req: Request, res: Response): Response</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>789</x><y>306</y><w>500</w><h>200</h></coordinates><panel_attributes>PredictionModel
++ BPNetworkPredict(req: Request, res: Response): Response</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>705</x><y>323</y><w>583</w><h>143</h></coordinates><panel_attributes>PredictionModel
 --
 + linearRegressionFunction(data: Object): (x: number) =&gt; number
 + polynomialRegressionFunction = (data: Array, degree: number): (inputArr: Array) =&gt; Array
 + ARIMAFunction(data: Array, p:number = 4, d:number = 4, q:number = 2): Object
 + SVMRegression(data: Object): Object
-+ BPNetworkFunction(data: Array, epochs:number = 4, d:hiddenUnits = 4, degree:number ):(inputArr: Array) =&gt; Array
++ BPNetworkFunction(data: Array, epochs:number = 4, d:hiddenUnits = 4, degree:number ):
+(inputArr: Array) =&gt; Array
 
 
 
@@ -46,16 +47,16 @@ zParent:string = z): Array
 
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>809</x><y>156</y><w>500</w><h>100</h></coordinates><panel_attributes>SelectionModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>848</x><y>180</y><w>385</w><h>110</h></coordinates><panel_attributes>SelectionModel
 --
 - optimizedPolynomialRegressionModel(data: Array): Object
 - optimizedARIMAModel = (data: Array): Object
 + optimizedModel(data: Array): Object
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>469</x><y>6</y><w>500</w><h>130</h></coordinates><panel_attributes>EvaluationModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>584</x><y>4</y><w>594</w><h>132</h></coordinates><panel_attributes>EvaluationModel
 --
 - MSE(realData: Array, fittedData: Array): number
 - R2(realData: Array, fittedData: Array string = ""): number
 - underfittingDegree(realData: Array, fittedData: Array,  portion: number = 0.5): number
 - AIC(realData: Array, fittedData: Array,  k: number): number
-+ fittingDegree(realData: Array, fittedData: Array, k: number, portion: number = 0.5): number</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>489</x><y>296</y><w>320</w><h>40</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>300;10;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>489</x><y>206</y><w>340</w><h>80</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>320;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>489</x><y>126</y><w>150</w><h>110</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>130;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>489</x><y>306</y><w>130</w><h>80</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>110;60;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>619</x><y>326</y><w>190</w><h>80</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;60;170;10</additional_attributes></element><element><id>Relation</id><coordinates><x>799</x><y>246</y><w>40</w><h>80</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>20;60;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>649</x><y>126</y><w>180</w><h>90</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;160;70</additional_attributes></element><element><id>Relation</id><coordinates><x>619</x><y>226</y><w>210</w><h>160</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;140;190;10</additional_attributes></element></diagram>
++ fittingDegree(realData: Array, fittedData: Array, k: number, portion: number = 0.5): number</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>540</x><y>268</y><w>187</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>150;50;11;10</additional_attributes></element><element><id>Relation</id><coordinates><x>540</x><y>224</y><w>330</w><h>44</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>280;20;11;10</additional_attributes></element><element><id>Relation</id><coordinates><x>540</x><y>125</y><w>231</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>190;10;11;50</additional_attributes></element><element><id>Relation</id><coordinates><x>518</x><y>268</y><w>77</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>50;50;11;10</additional_attributes></element><element><id>Relation</id><coordinates><x>639</x><y>334</y><w>88</w><h>44</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;60;20</additional_attributes></element><element><id>Relation</id><coordinates><x>727</x><y>279</y><w>143</w><h>66</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;40;110;10</additional_attributes></element><element><id>Relation</id><coordinates><x>782</x><y>125</y><w>88</w><h>121</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;60;90</additional_attributes></element><element><id>Relation</id><coordinates><x>606</x><y>257</y><w>264</w><h>88</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;60;220;10</additional_attributes></element></diagram>

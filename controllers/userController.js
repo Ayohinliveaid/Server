@@ -36,7 +36,7 @@ const signup = async (req, res) => {
     if (err == "用户未注册") {
       await userModel.addUser(phoneNumber, password);
       try {
-        res.status(200).json({ 提示: "注册成功" });
+        res.status(200).json({ message: "注册成功" });
       } catch (err) {
         res.status(400).json({ error: err });
       }
