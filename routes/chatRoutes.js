@@ -31,7 +31,7 @@ chatRouter.post(
 );
 chatRouter.post(
   "/getResponse",
-  // userMiddlewares.authenticateToken,
+  userMiddlewares.authenticateToken,
   chatController.getResponse
 );
 

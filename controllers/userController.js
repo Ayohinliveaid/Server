@@ -6,7 +6,7 @@ const login = async (req, res) => {
     const { phoneNumber, password } = req.body;
     const user = await userModel.queryUserByPhoneNumber(phoneNumber);
     if (user.password !== password) {
-      return res.status(200).json({ message: "密码错误" });
+      return res.status(401).json({ message: "密码错误" });
     } else {
       const user = { phoneNumber };
       const token = userModel.generateToken(user);
@@ -20,7 +20,7 @@ const login = async (req, res) => {
       return res.status(200).json({ message: "登录成功", token });
     }
   } catch (err) {
-    return res.status(400).json({ error: err });
+    return res.status(400).json({ message: err });
   }
 };
 
@@ -31,9 +31,10 @@ const signup = async (req, res) => {
   try {
     const user = await userModel.queryUserByPhoneNumber(phoneNumber);
     //返回用户信息
-    res.status(200).json({ "user id": user.id });
-  } catch (err) {
-    if (err == "用户未注册") {
+    //http status code 409，和当前资源冲突
+    res.status(409).json({ message: "该用户名已注册" });
+  } catch (error) {
+    if (error == "用户未注册") {
       await userModel.addUser(phoneNumber, password);
       try {
         res.status(200).json({ message: "注册成功" });
@@ -46,4 +47,15 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = { login, signup };
+const getUserInfo = async (req, res) => {
+  try {
+    const { user } = req.body;
+    const userInfo = await userModel.queryUserByPhoneNumber(user.phoneNumber);
+    console.log("getUserInfo's user", user);
+    return res.status(200).json({ userInfo });
+  } catch (err) {
+    return res.status(400).json({ err: err.message });
+  }
+};
+
+module.exports = { login, signup, getUserInfo };

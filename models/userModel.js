@@ -1,6 +1,6 @@
 const connection = require("../config/database");
 const jwt = require("jsonwebtoken");
-//查询用户，返回promise对象，返回用户信息
+//查询用户，返回promise对象，返回用户信息userInfo
 const queryUserByPhoneNumber = (phoneNumber) => {
   return new Promise((resolve, reject) => {
     connection.query(
