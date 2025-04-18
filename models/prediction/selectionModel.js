@@ -116,42 +116,46 @@ const optimizedModel = async (data) => {
     data,
     Math.floor(data.length / 4)
   );
+  let model;
   if (isAutocorelated) {
     console.log("自相关性强，使用ARIMA模型");
-    return optimizedARIMAModel(data);
+    model = optimizedARIMAModel(data);
+    model.answer = "自相关性强，使用ARIMA模型";
   } else {
     let islinear = dataProcessingModel.pearsonCorrelation(data);
     if (islinear) {
       console.log("线性强，使用多项式回归模型");
-      return optimizedPolynomialRegressionModel(data);
+      model = optimizedPolynomialRegressionModel(data);
+      model.answer = "线性强，使用多项式回归模型";
     } else {
       if (data.length < 500) {
         // console.log("哈哈，进入了data.length < 500的分支");
         console.log("数据少而非线性，使用支持向量回归模型");
         console.log("data", data);
-        return {
+        model = {
           // params: v,
           func: predictionModel.SVMRegression(data).func,
           n: dataProcessingModel.getPredictedX(data), //n表示要被预测的值，根据data获得
           // data: data,
           // fittedData: [],
           // fittingDegree: null,
-          note: "this is SVMRegression",
+          answer: "数据少而非线性，使用支持向量回归模型",
         };
       } else {
         console.log("数据多而非线性，使用神经网络回归模型");
-        return {
+        model = {
           // params: v,
           func: await predictionModel.BPNetworkFunction(data),
           n: dataProcessingModel.getPredictedX(data), //n表示要被预测的值，根据data获得
           data: data,
           // fittedData: [],
           // fittingDegree: null,
-          note: "this is BPNetworkRegression",
+          answer: "数据多而非线性，使用神经网络回归模型",
         };
       }
     }
   }
+  return model;
 };
 
 // const data = [

@@ -234,7 +234,9 @@ const optimizedPredict = async (req, res) => {
       n
     );
     const originData = convertProps.origin(newData);
-    return res.status(200).json(originData);
+    return res
+      .status(200)
+      .json({ data: originData, answer: optimizedModel.answer });
   }
 };
 

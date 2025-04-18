@@ -397,15 +397,21 @@ const convertProps = (data) => {
 const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
 const isISO8601 = (str) => isoRegex.test(str);
 
+//输入数组，对每一个元素的属性值进行检查，如果是iso8601，返回时间戳，否则返回原值
 const isofy = (data) => {
-  if (isISO8601(data)) {
-    return Date.parse(data);
-  } else {
-    return data;
-  }
+  let isofiedData = data.map((v, i) => {
+    const newItem = {};
+    for (const key in v) {
+      const value = v[key];
+      newItem[key] = isISO8601(value) ? Date.parse(value) : value;
+    }
+    return newItem;
+  });
+  return isofiedData;
 };
 
 const preprocessedData = (data) => {
+  console.log("isofy(data)", isofy(data));
   return isofy(data);
 };
 
