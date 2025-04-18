@@ -60,7 +60,7 @@ const getKeys = (obj) => {
 const getChildAndParent = (str) => {
   const arr = str.split(".");
   const child = arr[arr.length - 1];
-  const parent = arr[arr.length - 2] || arr[0];
+  const parent = arr[0];
   return { child, parent };
 };
 
@@ -108,6 +108,7 @@ const BFS = (obj, key) => {
 
 //先广度优先搜索，如果找到关键字，就深度优先搜索:address\location\ordinates
 const search = (obj, key, parent = key) => {
+  console.log("obj", obj, "key", key, "parent", parent);
   let queue = [obj]; // 用队列来存储对象，首先将根对象入队
   while (queue.length > 0) {
     const current = queue.shift(); // 从队列中取出一个元素进行处理
@@ -140,8 +141,9 @@ const mappedData = (
   yParent = y,
   zParent = z
 ) => {
-  console.log(x, y, xParent, yParent);
   let mappedResult = [];
+  console.log(data);
+
   if (z == null) {
     mappedResult = data.map((v) => {
       return {
@@ -149,8 +151,6 @@ const mappedData = (
         [y]: search(v, y, yParent),
       };
     });
-
-    // mappedResult = mappedResult.filter((v) => v.x != null && v.y != null);
   } else {
     mappedResult = data.map((v) => {
       return {
@@ -159,9 +159,6 @@ const mappedData = (
         [z]: search(v, z, zParent),
       };
     });
-    // mappedResult = mappedResult.filter(
-    //   (v) => v.x != null && v.y != null && v.z != null
-    // );
   }
   mappedResult.filter((v) => Object.values(v).every((value) => value != null));
 
@@ -367,8 +364,13 @@ const denormalizedObject = (normalizedObject, min, max) => {
 
 //处理数据，将属性转化为xy，再转化回原属性值，以便在各个预测函数中使用xy预测，但最后返回原始数据
 const convertProps = (data) => {
-  const xProp = Object.keys(data[0])[0];
-  const yProp = Object.keys(data[0])[1];
+  let xProp, yProp;
+  for (let i in data) {
+    if (data[i[0]] && data[i[1]]) {
+      xProp = Object.keys(data[0])[0];
+      yProp = Object.keys(data[0])[1];
+    }
+  }
   const xy = () => {
     const xyResult = data.map((v) => {
       return {
@@ -390,6 +392,23 @@ const convertProps = (data) => {
 
   return { xy, origin }; //xy(),origin()即可得到对应数组
 };
+
+//数据预处理，将iso字符串判断并转化成可用时间
+const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
+const isISO8601 = (str) => isoRegex.test(str);
+
+const isofy = (data) => {
+  if (isISO8601(data)) {
+    return Date.parse(data);
+  } else {
+    return data;
+  }
+};
+
+const preprocessedData = (data) => {
+  return isofy(data);
+};
+
 module.exports = {
   simplifyObj,
   getKeys,
@@ -408,4 +427,5 @@ module.exports = {
   normalizedObject,
   denormalizedObject,
   convertProps,
+  preprocessedData,
 };

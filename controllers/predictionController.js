@@ -141,7 +141,7 @@ const optimizedARIMAPredict = (req, res) => {
     const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     const n = dataProcessingModel.getPredictedX(xyData, 1);
-    const func = selectionModel.optimizedARIMAModel(data).func;
+    const func = selectionModel.optimizedARIMAModel(xyData).func;
     // const list = selectionModel.optimizedARIMAModel(xyData);
     //返回和data的{x,y}相同的格式
     const predictedArr = func(n)[0]; //第一个是预测结果，第二个是误差
@@ -151,6 +151,7 @@ const optimizedARIMAPredict = (req, res) => {
     );
     const originData = convertProps.origin(newData);
     return res.status(200).json(originData);
+    // return res.status(200).json(selectionModel.optimizedARIMAModel(data));
   }
 };
 

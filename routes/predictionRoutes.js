@@ -51,7 +51,7 @@ predictionRouter.post(
 
 predictionRouter.post(
   "/optimizedPredict",
-  userMiddlewares.authenticateToken,
+  // userMiddlewares.authenticateToken,
   predictionController.optimizedPredict
 );
 

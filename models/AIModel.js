@@ -128,7 +128,7 @@ const descriptionFromDS = (data, question) => {
   };
   const questionMessages = {
     role: "user",
-    content: "haha", // Only stringify objects
+    content: question, // Only stringify objects
   };
   console.log("questionMessages", questionMessages);
   console.log("dataMessages", dataMessages);

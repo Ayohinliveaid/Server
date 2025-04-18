@@ -103,10 +103,11 @@ const getResponse = async (req, res) => {
     // const data = await propertyModel.requestRealtorAPI(config);
     const data = await propertyModel.requestLocalJSON(config); //节约API，暂时使用本地休斯顿出租房产数据
     const properties = data.properties;
-    // console.log("data", data, "data");
     res.write(
-      JSON.stringify({ step: 2, answer: "房产信息已获取，正在分析数据维度" }) +
-        "\n"
+      JSON.stringify({
+        step: 2,
+        answer: "房产信息已获取，正在分析数据维度",
+      }) + "\n"
     );
 
     //请求数据集中坐标的名称，作为xy值
@@ -149,11 +150,13 @@ const getResponse = async (req, res) => {
       null
     );
     // console.log("mappedData", mappedData);
+    //获取到数据后预处理
+    const preprocessedData = dataProcessingModel.preprocessedData(mappedData);
     res.write(
       JSON.stringify({
         step: 4,
         answer: "数据处理完成，正在分析结果",
-        data: mappedData,
+        data: preprocessedData,
         x,
         y,
       }) + "\n"
