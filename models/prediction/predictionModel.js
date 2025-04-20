@@ -100,7 +100,7 @@ const ARIMAFunction = (data, p = 4, d = 4, q = 2) => {
 };
 
 //支持向量机回归模型
-const SVMRegression = (data) => {
+const SVMRegression = (data, cost = 1, epsilon = 0.0001, gamma = 10) => {
   const xArr = data.map((v) => [v.x]);
   console.log("xArr:", xArr);
   const yArr = data.map((v) => v.y);
@@ -119,9 +119,9 @@ const SVMRegression = (data) => {
   const svm = new SVM({
     type: SVM.SVM_TYPES.EPSILON_SVR,
     kernel: SVM.KERNEL_TYPES.RBF,
-    cost: 1.0, // 降低 C 值
-    epsilon: 0.0001, // 根据 y 的尺度调整
-    gamma: 10, // 降低 gamma
+    cost: cost, // 降低 C 值
+    epsilon: epsilon, // 根据 y 的尺度调整
+    gamma: gamma, // 降低 gamma
   });
   svm.train(normalizedInputs, normalizedOutputs);
   // console.log(

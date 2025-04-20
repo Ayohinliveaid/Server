@@ -48,6 +48,11 @@ predictionRouter.post(
   // userMiddlewares.authenticateToken,
   predictionController.SVMRegressionPredict
 );
+predictionRouter.post(
+  "/optimizedSVMRegressionPredict",
+  // userMiddlewares.authenticateToken,
+  predictionController.optimizedSVMRegressionPredict
+);
 
 predictionRouter.post(
   "/optimizedPredict",

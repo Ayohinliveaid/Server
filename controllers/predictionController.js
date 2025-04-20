@@ -206,6 +206,31 @@ const SVMRegressionPredict = async (req, res) => {
   }
 };
 
+//最佳参数的支持向量回归
+const optimizedSVMRegressionPredict = async (req, res) => {
+  const { data } = req.body; //n是要预测的数组，也就是x的数组
+  if (data.length === 0) {
+    return res.status(400).json("controller收到的参数存在非数组，引发错误");
+  } else {
+    const convertProps = dataProcessingModel.convertProps(data);
+    let xyData = convertProps.xy();
+    const n = dataProcessingModel.getPredictedX(xyData);
+    const optimizedSVMModel = selectionModel.optimizedSVMModel(xyData);
+    const func = optimizedSVMModel.func;
+    // const list = selectionModel.optimizedARIMAModel(xyData);
+    //返回和data的{x,y}相同的格式
+    const predictedArr = func(n);
+    const newData = dataProcessingModel.arrConcatenatedData(
+      xyData,
+      predictedArr,
+      n
+    );
+    const originData = convertProps.origin(newData);
+    return res.status(200).json({ data: originData });
+    // return res.status(200).json(optimizedSVMModel);
+  }
+};
+
 //综合模型预测
 const optimizedPredict = async (req, res) => {
   const { data } = req.body; //n是要预测的数组，也就是x的数组
@@ -222,6 +247,7 @@ const optimizedPredict = async (req, res) => {
     const func = optimizedModel.func;
     const n = optimizedModel.n;
     console.log("n", n);
+    console.log(optimizedModel.answer);
 
     let predictedArr = await func(n);
     if (Array.isArray(predictedArr[0])) {
@@ -250,5 +276,6 @@ module.exports = {
   optimizedARIMAPredict,
   BPNetworkPredict,
   SVMRegressionPredict,
+  optimizedSVMRegressionPredict,
   optimizedPredict,
 };

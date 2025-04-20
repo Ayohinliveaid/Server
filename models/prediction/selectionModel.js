@@ -4,6 +4,7 @@ const predictionModel = require("./predictionModel");
 const evaluationModel = require("./evaluationModel");
 const dataProcessingModel = require("../dataProcessingModel");
 const { json } = require("express");
+const SVM = require("libsvm-js/out/asm/libsvm");
 
 //调用评价模型，对各个预测方法生成的拟合数据进行评分，
 
@@ -108,6 +109,67 @@ const optimizedARIMAModel = (data) => {
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
 
+//SVM回归选择最佳参数
+const optimizedSVMModel = (data) => {
+  //cost,epsilon,gamma的范围，生成参数列表
+  const costRange = [0.01, 0.1, 1, 10, 100, 1000];
+  const epsilonRange = [0.0001, 0.001, 0.01, 0.1, 0.2, 0.5];
+  const gammaRange = [0.001, 0.01, 0.1, 1, 10, 100];
+  let paramList = [];
+  for (let i = 0; i < costRange.length; i++) {
+    for (let j = 0; j < epsilonRange.length; j++) {
+      for (let k = 0; k < gammaRange.length; k++) {
+        paramList.push({
+          cost: costRange[i],
+          epsilon: epsilonRange[j],
+          gamma: gammaRange[k],
+        });
+      }
+    }
+  }
+
+  //预测方法对象，包括多项式项数，具体的预测函数，原数据，生成的拟合数据，获得的分数，生成一个预测方法对象的数组，来保存
+  const SVMModelList = paramList.map((v, i) => {
+    const SVMRegression = predictionModel.SVMRegression(
+      data,
+      v.cost,
+      v.epsilon,
+      v.gamma
+    );
+    return {
+      params: v,
+      // SVMRegression: SVMRegression,
+      func: SVMRegression.func,
+      free: SVMRegression.free, //svmModel特有，需要手动释放
+      n: dataProcessingModel.getPredictedX(data), //n表示要被预测的值，根据data获得
+      data: data,
+      fittedData: null,
+      fittingDegree: null,
+    };
+  });
+
+  SVMModelList.forEach((v, i) => {
+    v.fittedData = v.data.map((value, i) => {
+      return { x: value.x, y: v.func(v.data.map((v) => v.x))[i] };
+    });
+    v.fittingDegree = evaluationModel.fittingDegree(v.data, v.fittedData, 3);
+    // v.free();
+  });
+  //选出最好的模型，目前仅仅从多项式回归选择，也就是仅仅选择多项式项数
+  const bestPredictionModel = SVMModelList.reduce((model, v, i) => {
+    return model.fittingDegree > v.fittingDegree ? model : SVMModelList[i];
+  });
+  //除了最优模型，其他全部释放
+  SVMModelList.forEach((v, i) => {
+    if (v != bestPredictionModel) {
+      v.free();
+    }
+    console.log(v.fittingDegree);
+  });
+  console.log("bestPredictionModel", bestPredictionModel);
+  return bestPredictionModel; //此处返回预测模型，便于查看选择结果
+};
+
 //综合多项式回归选择最佳预测模型，输入数据，调用最佳参数的对应模型
 
 const optimizedModel = async (data) => {
@@ -118,31 +180,24 @@ const optimizedModel = async (data) => {
   );
   let model;
   if (isAutocorelated) {
-    console.log("自相关性强，使用ARIMA模型");
+    // console.log("自相关性强，使用ARIMA模型");
     model = optimizedARIMAModel(data);
     model.answer = "自相关性强，使用ARIMA模型";
   } else {
     let islinear = dataProcessingModel.pearsonCorrelation(data);
     if (islinear) {
-      console.log("线性强，使用多项式回归模型");
+      // console.log("线性强，使用多项式回归模型");
       model = optimizedPolynomialRegressionModel(data);
       model.answer = "线性强，使用多项式回归模型";
     } else {
       if (data.length < 500) {
         // console.log("哈哈，进入了data.length < 500的分支");
-        console.log("数据少而非线性，使用支持向量回归模型");
-        console.log("data", data);
-        model = {
-          // params: v,
-          func: predictionModel.SVMRegression(data).func,
-          n: dataProcessingModel.getPredictedX(data), //n表示要被预测的值，根据data获得
-          // data: data,
-          // fittedData: [],
-          // fittingDegree: null,
-          answer: "数据少而非线性，使用支持向量回归模型",
-        };
+        // console.log("数据少而非线性，使用支持向量回归模型");
+        // console.log("data", data);
+        model = optimizedSVMModel(data);
+        model.answer = "数据少而非线性，使用支持向量回归模型";
       } else {
-        console.log("数据多而非线性，使用神经网络回归模型");
+        // console.log("数据多而非线性，使用神经网络回归模型");
         model = {
           // params: v,
           func: await predictionModel.BPNetworkFunction(data),
@@ -174,5 +229,6 @@ const optimizedModel = async (data) => {
 module.exports = {
   optimizedPolynomialRegressionModel,
   optimizedARIMAModel,
+  optimizedSVMModel,
   optimizedModel,
 };
