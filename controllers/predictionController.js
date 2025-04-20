@@ -212,9 +212,10 @@ const optimizedPredict = async (req, res) => {
   if (data.length === 0) {
     return res.status(400).json("controller收到的参数存在非数组，引发错误");
   } else {
+    console.log("optimizedPredict收到data", data);
     const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
-    console.log("xyData", xyData);
+    console.log("optimizedPredict中xyData", xyData);
 
     const optimizedModel = await selectionModel.optimizedModel(xyData);
     // console.log("optimizedModel", JSON.stringify(optimizedModel));
@@ -227,7 +228,7 @@ const optimizedPredict = async (req, res) => {
       predictedArr = predictedArr[0];
     }
     // console.log("predictedArr", predictedArr);
-    //将n和预测的结果predictedArr拼接到数组xyData
+    //将n和预测的结果predictedArr拼接到数组xyData，或者返回预测数组不拼接，具体看arrConcatenatedData配置
     const newData = dataProcessingModel.arrConcatenatedData(
       xyData,
       predictedArr,

@@ -279,11 +279,12 @@ const getPredictedX = (data, isARIMA = 0) => {
   const dataN = data.length;
   const n = dataN < 10 ? 1 : Math.floor(dataN / 10);
   if (isARIMA == 1) {
-    return n;
+    return n; //arima模型只能返回接下来的n个
   } else {
     data.sort((v1, v2) => v1.x - v2.x);
     let avarageGap = 0;
-    const predictedX = [];
+    // const predictedX = []; //预测接下里的n个，所以初始为空
+    const predictedX = data.map((v) => v.x); //预测训练数据和接下来n个
     avarageGap = (data[dataN - 1].x - data[0].x) / (dataN - 1);
     for (let i = 1; i <= n; i++) {
       predictedX.push(data[dataN - 1].x + i * avarageGap);
@@ -315,9 +316,8 @@ const arrConcatenatedData = (data, arr, n = null) => {
     });
   }
 
-  const newData = data.concat(objectArr);
-  // const originData = convertProps(data).origin(newData);
-  return newData;
+  const newData = data.concat(objectArr); //如果是附加原数组，返回这个直接返回objectArr
+  return objectArr;
 };
 
 // 将数组转为归一化的张量，输入二维数组或者一维数组
@@ -366,7 +366,7 @@ const denormalizedObject = (normalizedObject, min, max) => {
 const convertProps = (data) => {
   let xProp, yProp;
   for (let i in data) {
-    if (data[i[0]] && data[i[1]]) {
+    if (Object.keys(data[0])[0] && Object.keys(data[0])[1]) {
       xProp = Object.keys(data[0])[0];
       yProp = Object.keys(data[0])[1];
     }
