@@ -1,7 +1,7 @@
 //包括不同的预测方法，根据输入数据，生成预测函数
 const math = require("mathjs");
 const ARIMA = require("arima");
-const tf = require("@tensorflow/tfjs");
+const tf = require("@tensorflow/tfjs-node");
 const SVM = require("libsvm-js/asm");
 const dataProcessingModel = require("../dataProcessingModel");
 // import * as tf from "@tensorflow/tfjs-node";
@@ -200,6 +200,7 @@ const BPNetworkFunction = async (
     epochs: epoch,
     batchSize: batchSize,
     shuffle: true,
+    verbose: 0, // 关闭所有输出
     callbacks: {
       onEpochEnd: (epoch, logs) => {
         // console.log(`Epoch ${epoch + 1}: Loss = ${logs.loss}`);

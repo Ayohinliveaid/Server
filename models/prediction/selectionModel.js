@@ -207,8 +207,6 @@ const optimizedBPNetworkModel = async (data, res) => {
   const BPNetworkModelList = await Promise.all(
     paramList.map(async (v) => {
       //显示当前进度
-      i++;
-      console.log("正在生成" + i + "个模型...");
 
       const func = await predictionModel.BPNetworkFunction(
         data,
@@ -237,6 +235,7 @@ const optimizedBPNetworkModel = async (data, res) => {
       );
 
       //显示当前进度
+      i++;
       console.log("已生成" + i + "个模型");
       if (res) {
         res.write(JSON.stringify({ answer: "已生成" + i + "个模型" }) + "\n");
