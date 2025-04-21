@@ -285,10 +285,13 @@ const getPredictedX = (data, isARIMA = 0) => {
     let avarageGap = 0;
     // const predictedX = []; //预测接下里的n个，所以初始为空
     const predictedX = data.map((v) => v.x); //预测训练数据和接下来n个
-    avarageGap = (data[dataN - 1].x - data[0].x) / (dataN - 1);
+    avarageGap = (predictedX[dataN - 1] - predictedX[0]) / (dataN - 1);
+    // console.log("avarageGap", avarageGap);
+    // console.log("push前predictedX", predictedX);
     for (let i = 1; i <= n; i++) {
-      predictedX.push(data[dataN - 1].x + i * avarageGap);
+      predictedX.push(predictedX[dataN - 1] + i * avarageGap);
     }
+    // console.log("push后predictedX", predictedX);
     return predictedX;
   }
 };

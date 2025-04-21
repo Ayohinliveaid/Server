@@ -26,9 +26,10 @@ const optimizedPolynomialRegressionModel = (data) => {
   });
   //调用评价模型，对各个预测方法生成的拟合数据进行评分
   predictionModelList.forEach((v, i) => {
-    v.fittedData = v.data.map((value, i) => {
-      return { x: value.x, y: v.func(v.data.map((v) => v.x))[i] };
+    v.fittedData = v.data.map((value, index) => {
+      return { x: value.x, y: v.func(v.data.map((v) => v.x))[index] };
     });
+    // v.fittedData = v.func(v.data.map((v) => v.x));
     v.fittingDegree = evaluationModel.fittingDegree(
       v.data,
       v.fittedData,
@@ -37,10 +38,11 @@ const optimizedPolynomialRegressionModel = (data) => {
   });
 
   //选出最好的模型，目前仅仅从多项式回归选择，也就是仅仅选择多项式项数
-  const bestPredictionModel = predictionModelList.reduce((model, v, i) => {
-    return model.fittingDegree > v.fittingDegree
-      ? model
-      : predictionModelList[i];
+  const validModels = predictionModelList.filter(
+    (m) => !isNaN(m.fittingDegree)
+  );
+  const bestPredictionModel = validModels.reduce((model, v, i) => {
+    return model.fittingDegree > v.fittingDegree ? model : validModels[i];
   });
   console.log("optimizedPolynomialRegressionModel", bestPredictionModel);
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
@@ -103,9 +105,15 @@ const optimizedARIMAModel = (data) => {
   });
 
   //选出最好的模型，目前仅仅从ARIMA回归选择，也就是仅仅选择p,d,q
+  let initialModel;
+  for (let i = 0; i < ARIMAModelList.length; i++) {
+    if (ARIMAModelList[i]) {
+      initialModel = ARIMAModelList[i];
+    }
+  }
   const bestPredictionModel = ARIMAModelList.reduce((model, v, i) => {
     return model.fittingDegree > v.fittingDegree ? model : ARIMAModelList[i];
-  }, ARIMAModelList[0]);
+  });
 
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
@@ -271,25 +279,33 @@ const optimizedModel = async (data) => {
     Math.floor(data.length / 4)
   );
   let model;
-  if (isAutocorelated) {
-    model = optimizedARIMAModel(data);
-    model.answer = "自相关性强，使用ARIMA模型";
-  } else {
-    let islinear = dataProcessingModel.pearsonCorrelation(data);
-    if (islinear) {
-      model = optimizedPolynomialRegressionModel(data);
-      model.answer = "线性强，使用多项式回归模型";
-    } else {
-      if (data.length < 500) {
-        model = optimizedSVMModel(data);
-        model.answer = "数据少而非线性，使用支持向量回归模型";
-      } else {
-        model = await optimizedBPNetworkModel(data);
-        model.answer = "数据多而非线性，使用神经网络回归模型";
-        console.log("selectionModel中：", model);
-      }
-    }
-  }
+  // if (isAutocorelated) {
+  //   model = optimizedARIMAModel(data);
+  //   model.answer = "自相关性强，使用ARIMA模型";
+  // } else {
+  //   let islinear = dataProcessingModel.pearsonCorrelation(data);
+  //   if (islinear) {
+  //     model = optimizedPolynomialRegressionModel(data);
+  //     model.answer = "线性强，使用多项式回归模型";
+  //   } else {
+  //     if (data.length < 500) {
+  //       model = optimizedSVMModel(data);
+  //       model.answer = "数据少而非线性，使用支持向量回归模型";
+  //     } else {
+  //       model = await optimizedBPNetworkModel(data);
+  //       model.answer = "数据多而非线性，使用神经网络回归模型";
+  //       console.log("selectionModel中：", model);
+  //     }
+  //   }
+  // }
+  // model = optimizedARIMAModel(data);
+  // model.answer = "使用ARIMA模型";
+  model = optimizedPolynomialRegressionModel(data);
+  model.answer = "使用多项式回归模型";
+  // model = optimizedSVMModel(data);
+  // model.answer = "使用支持向量回归模型";
+  // model = await optimizedBPNetworkModel(data);
+  // model.answer = "使用神经网络回归模型";
   return model;
 };
 
