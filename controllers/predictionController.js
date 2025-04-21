@@ -271,8 +271,8 @@ const optimizedPredict = async (req, res) => {
     // console.log("optimizedModel", JSON.stringify(optimizedModel));
     const func = optimizedModel.func;
     const n = optimizedModel.n;
-    console.log("n", n);
-    console.log(optimizedModel.answer);
+    // console.log("n", n);
+    // console.log(optimizedModel);
 
     let predictedArr = await func(n);
     if (Array.isArray(predictedArr[0])) {

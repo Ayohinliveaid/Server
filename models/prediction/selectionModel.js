@@ -181,10 +181,10 @@ const optimizedBPNetworkModel = async (data, res) => {
   }
 
   //生成参数列表
-  const unitRange = [100, 200];
+  const unitRange = [50, 200];
   const activationRange = ["relu", "tanh"];
-  const batchSizeRange = [4, 8];
-  const epochRange = [400, 500];
+  const batchSizeRange = [8];
+  const epochRange = [400, 600];
   let paramList = [];
   for (let i = 0; i < unitRange.length; i++) {
     for (let j = 0; j < activationRange.length; j++) {
@@ -207,7 +207,7 @@ const optimizedBPNetworkModel = async (data, res) => {
   const BPNetworkModelList = await Promise.all(
     paramList.map(async (v) => {
       //显示当前进度
-
+      console.log("正在生成模型");
       const func = await predictionModel.BPNetworkFunction(
         data,
         v.unit,
@@ -284,8 +284,9 @@ const optimizedModel = async (data) => {
         model = optimizedSVMModel(data);
         model.answer = "数据少而非线性，使用支持向量回归模型";
       } else {
-        model = optimizedBPNetworkModel(data);
+        model = await optimizedBPNetworkModel(data);
         model.answer = "数据多而非线性，使用神经网络回归模型";
+        console.log("selectionModel中：", model);
       }
     }
   }
