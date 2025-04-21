@@ -275,11 +275,22 @@ const ljungBoxTest = (data, maxLag) => {
 // ljungBoxTest(data, 1); // 示例数据
 
 //对于预测数据，获取要预测x的值，输入一个data，返回要预测的x的数组，以输入的x平均间隔为基准的后面n/10个数
-const getPredictedX = (data, isARIMA = 0) => {
+const getPredictedX = (data, type = 0) => {
   const dataN = data.length;
   const n = dataN < 10 ? 1 : Math.floor(dataN / 10);
-  if (isARIMA == 1) {
+  if (type == "arima") {
     return n; //arima模型只能返回接下来的n个
+  } else if (type == "svm") {
+    data.sort((v1, v2) => v1.x - v2.x);
+    let avarageGap = 0;
+    // const predictedX = []; //预测接下里的n个，所以初始为空
+    const predictedX = data.map((v) => v.x); //预测训练数据范围内的
+    avarageGap = (predictedX[dataN - 1] - predictedX[0]) / (dataN - 1);
+    avarageGap /= 2;
+    for (let i = 1; i <= 2 * dataN - 2; i++) {
+      predictedX.push(predictedX[0] + i * avarageGap);
+    }
+    return predictedX;
   } else {
     data.sort((v1, v2) => v1.x - v2.x);
     let avarageGap = 0;

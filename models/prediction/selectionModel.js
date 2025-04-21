@@ -8,7 +8,7 @@ const SVM = require("libsvm-js/out/asm/libsvm");
 
 //调用评价模型，对各个预测方法生成的拟合数据进行评分，
 
-//optimizedPolynomialRegressionModel表示多项式回归最佳模型
+//多项式回归最佳模型------------------------------------------------------------------------------------------------------------------------------
 const optimizedPolynomialRegressionModel = (data) => {
   //首先调用测试模型中所有预测方法，生成相应的拟合数据，具体来说，是多项式回归的方法中，使用不同的方法作为项数
   const degrees = [...Array(30)].map((v, i) => i + 1); //多项式回归，项数的范围
@@ -48,7 +48,7 @@ const optimizedPolynomialRegressionModel = (data) => {
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
 
-//自动选择时间序列预测ARIMA的参数，包括pdq，返回最佳模型
+//自动选择时间序列预测ARIMA的参数，包括pdq，返回最佳模型--------------------------------------------------------------------------------
 const optimizedARIMAModel = (data) => {
   //p,d,q的范围，生成参数列表
   const pRange = [1, 2, 3, 4];
@@ -118,7 +118,7 @@ const optimizedARIMAModel = (data) => {
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
 
-//SVM回归选择最佳参数
+//SVM回归选择最佳参数------------------------------------------------------------------------------------------------------------------------------
 const optimizedSVMModel = (data) => {
   //cost,epsilon,gamma的范围，生成参数列表
   const costRange = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
@@ -150,7 +150,7 @@ const optimizedSVMModel = (data) => {
       // SVMRegression: SVMRegression,
       func: SVMRegression.func,
       free: SVMRegression.free, //svmModel特有，需要手动释放
-      n: dataProcessingModel.getPredictedX(data), //n表示要被预测的值，根据data获得
+      n: dataProcessingModel.getPredictedX(data, "svm"), //n表示要被预测的值，根据data获得
       data: data,
       fittedData: null,
       fittingDegree: null,
@@ -179,7 +179,7 @@ const optimizedSVMModel = (data) => {
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
 
-//最佳BP神经网络模型
+//最佳BP神经网络模型------------------------------------------------------------------------------------------------------------------------------
 const optimizedBPNetworkModel = async (data, res) => {
   //首先返回响应头
   if (res) {
@@ -300,10 +300,10 @@ const optimizedModel = async (data) => {
   // }
   // model = optimizedARIMAModel(data);
   // model.answer = "使用ARIMA模型";
-  model = optimizedPolynomialRegressionModel(data);
-  model.answer = "使用多项式回归模型";
-  // model = optimizedSVMModel(data);
-  // model.answer = "使用支持向量回归模型";
+  // model = optimizedPolynomialRegressionModel(data);
+  // model.answer = "使用多项式回归模型";
+  model = optimizedSVMModel(data);
+  model.answer = "使用支持向量回归模型";
   // model = await optimizedBPNetworkModel(data);
   // model.answer = "使用神经网络回归模型";
   return model;

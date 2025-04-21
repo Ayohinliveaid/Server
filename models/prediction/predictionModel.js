@@ -118,7 +118,10 @@ const SVMRegression = (data, cost = 1, epsilon = 0.0001, gamma = 10) => {
 
   const svm = new SVM({
     type: SVM.SVM_TYPES.EPSILON_SVR,
-    kernel: SVM.KERNEL_TYPES.RBF,
+    // kernel: SVM.KERNEL_TYPES.RBF,
+    // kernel: SVM.KERNEL_TYPES.LINEAR,
+    kernel: SVM.KERNEL_TYPES.SIGMOID,
+
     cost: cost, // 降低 C 值
     epsilon: epsilon, // 根据 y 的尺度调整
     gamma: gamma, // 降低 gamma

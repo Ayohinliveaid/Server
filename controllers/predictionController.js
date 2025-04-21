@@ -115,7 +115,7 @@ const ARIMAPredict = (req, res) => {
   } else {
     const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
-    const n = dataProcessingModel.getPredictedX(xyData, 1);
+    const n = dataProcessingModel.getPredictedX(xyData, "arima");
     const func = predictionModel.ARIMAFunction(xyData).func;
     // const stationary = predictionModel.ARIMAFunction(xyData).stationary;
     //返回和data的{x,y}相同的格式
@@ -140,7 +140,7 @@ const optimizedARIMAPredict = (req, res) => {
   } else {
     const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
-    const n = dataProcessingModel.getPredictedX(xyData, 1);
+    const n = dataProcessingModel.getPredictedX(xyData, "arima");
     const func = selectionModel.optimizedARIMAModel(xyData).func;
     // const list = selectionModel.optimizedARIMAModel(xyData);
     //返回和data的{x,y}相同的格式
