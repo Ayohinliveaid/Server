@@ -280,7 +280,7 @@ const optimizedModel = async (data) => {
       model = optimizedPolynomialRegressionModel(data);
       model.answer = "线性强，使用多项式回归模型";
     } else {
-      if (data.length < 20) {
+      if (data.length < 500) {
         model = optimizedSVMModel(data);
         model.answer = "数据少而非线性，使用支持向量回归模型";
       } else {

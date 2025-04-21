@@ -67,15 +67,18 @@ const underfittingDegree = (realData, fittedData, portion = 0.5) => {
 
 //计算简化版赤池信息法则公式
 const AIC = (realData, fittedData, k) => {
-  // 计算残差平方和 (RSS)
-  const residualSumOfSquares = realData.reduce((sum, y_i, index) => {
+  const n = realData.length;
+
+  // 计算 RSS
+  const rss = realData.reduce((sum, y_i, index) => {
     const y_hat_i = fittedData[index];
     return sum + Math.pow(y_i.y - y_hat_i.y, 2);
   }, 0);
 
-  const result = 2 * k + residualSumOfSquares;
+  // 代入 AIC = 2k + n * log(RSS / n)
+  const aic = 2 * k + n * Math.log(rss / n);
 
-  return result;
+  return aic;
 };
 
 //综合拟合程度，对欠拟合程度和过拟合程度进行加权平均，越高越好
