@@ -1,13 +1,13 @@
-<diagram program="umletino" version="15.1"><zoom_level>13</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>776</x><y>78</y><w>481</w><h>182</h></coordinates><panel_attributes>ChatModel
+<diagram program="umletino" version="15.1"><zoom_level>13</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>793</x><y>78</y><w>481</w><h>182</h></coordinates><panel_attributes>ChatModel
 --
-+ saveChatToChatHistory(chat: Object, user: Object ): Promise
-+ saveChatToSavedChats(chat: Object, user: Object ): Promise
-+ getChatHistory(chat: Object, state: Number): Promise
-+ getSavedChats(user: Object ): Promise
-+ deleteChatFromSavedChats(user: Object ): Promise
-+ deleteChatFromChatHistory(chat: Object): Promise
-+ updateSavedState(chat: Object): Promise
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>87</x><y>78</y><w>455</w><h>156</h></coordinates><panel_attributes>ChatController
++ saveChatToChatHistory(chat: object, user: object ): Promise
++ saveChatToSavedChats(chat: object, user: object ): Promise
++ getChatHistory(chat: object, state: number): Promise
++ getSavedChats(user: object ): Promise
++ deleteChatFromSavedChats(user: object ): Promise
++ deleteChatFromChatHistory(chat: object): Promise
++ updateSavedState(chat: object): Promise
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>104</x><y>78</y><w>455</w><h>156</h></coordinates><panel_attributes>ChatController
 --
 + saveTheChat(req: Request, res: Response): Response
 + deleteTheChat(req: Request, res: Response): Response
@@ -15,53 +15,52 @@
 + getChatHistroy(req: Request, res: Response): Response
 + getSavedChats(req: Request, res: Response): Response
 + getResponse(req: Request, res: Response): Response
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>763</x><y>286</y><w>429</w><h>325</h></coordinates><panel_attributes>AIModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>780</x><y>286</y><w>429</w><h>325</h></coordinates><panel_attributes>AIModel
 --
-- openai: Object  
-- paramList: Array  
-- stateCode: Object  
-- standardResponse: Object  
-- messageOfStateCode: Array  
-- standardConfig: Object  
-- standardDimension: Object  
-- messagesOfConfig: Array  
-- messagesOfDescription: Array  
-- messageOfDimension: Array  
+- openai: object  
+- paramList: array  
+- stateCode: object  
+- standardResponse: object  
+- messageOfStateCode: array  
+- standardConfig: object  
+- standardDimension: object  
+- messagesOfConfig: array  
+- messagesOfDescription: array  
+- messageOfDimension: array  
 --
 + configFromDS(text: string): Promise
 + descriptionFromDS(data: Object, text: string): Promise
 + dimensionFromDS(llist: string, text: string): Promise
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>438</x><y>0</y><w>351</w><h>65</h></coordinates><panel_attributes>PropertyModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>455</x><y>0</y><w>351</w><h>65</h></coordinates><panel_attributes>PropertyModel
 --
 + requestRealtorAPI(config: Object): Promise
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>74</x><y>260</y><w>650</w><h>507</h></coordinates><panel_attributes>DataProcessingModel
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>91</x><y>260</y><w>650</w><h>507</h></coordinates><panel_attributes>DataProcessingModel
 --
-+ simplifyObj(obj: Object): Object
-+ flattenObject(obj: Object, parentKey: string = ""): Object
-+ getKeys(obj: Object): Array
-+ getChildAndParent(str: String): Object
-+ DFS(obj: Object, key: String): Any
-+ BFS(obj: Object, key: String): Any
-+ search(obj: Object, key: string, parent: string = key)
-+ mappedData(data: Object,
++ simplifyObj(obj: object): object
++ flattenObject(obj: object, parentKey: string = ""): object
++ getKeys(obj: object): array
++ getChildAndParent(str: string): object
++ DFS(obj: object, key: string): any
++ BFS(obj: object, key: string): any
++ search(obj: object, key: string, parent: string = key): any
++ mappedData(data: array,
 x: string,y: string,
-z:string = null,
-xParent:string = x,
-yParent:string = y, 
-zParent:string = z): Array
-
-+ pearsonCorrelation(data: Object): boolean
-+ autocorrelation = (series: Array, lag: number): Number
-+ getChiSquaredCriticalValue(df: Number, alpha: Number): Number
-+ ljungBoxTest(data: Object, maxLag: number): boolean
-+ getPredictedX(data: Object, isARIMA: boolean = 0): number | number[]
-+ arrConcatenatedData(data: Array, arr: Array, n: number= null): Array
-+ normalizedTensor(arr: Array, min: number = null, max: number = null): Object
-+ normalizedObject(arr: Array, min: number  = null, max: number = null): Object
-+ denormalizedObject(normalizedObject: Object, min: number , max: number ): Array
-+ convertProps(data: Array): Object
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>880</x><y>13</y><w>273</w><h>52</h></coordinates><panel_attributes>database
+z: string = null,
+xParent: string = x,
+yParent: string = y, 
+zParent: string = z): array
++ pearsonCorrelation(data: array): boolean
++ autocorrelation = (series: array, lag: number): number
++ getChiSquaredCriticalValue(df: number, alpha: number): number
++ ljungBoxTest(data: array, maxLag: number): boolean
++ getPredictedX(data: array, type: string = '0'): number | array
++ arrConcatenatedData(data: array, arr: array, n: number= null): array
++ normalizedTensor(arr: array, min: number = null, max: number = null): object
++ normalizedObject(arr: array, min: number  = null, max: number = null): object
++ denormalizedObject(normalizedObject: object, min: number , max: number ): array
++ convertProps(data: array): object
++ preprocessedData(data: array): array</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>897</x><y>13</y><w>273</w><h>52</h></coordinates><panel_attributes>database
 --
-+ connection
++ connection: mysql2.Connection
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>802</x><y>26</y><w>104</w><h>78</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>60;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>529</x><y>156</y><w>117</w><h>130</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>70;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>529</x><y>117</y><w>273</w><h>78</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>190;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>529</x><y>52</y><w>130</w><h>143</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>80;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>529</x><y>156</y><w>299</w><h>156</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>210;100;10;10</additional_attributes></element></diagram>
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>26</y><w>104</w><h>78</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>60;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>546</x><y>156</y><w>117</w><h>130</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>70;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>546</x><y>117</y><w>273</w><h>78</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>190;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>546</x><y>52</y><w>130</w><h>143</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>80;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>546</x><y>156</y><w>299</w><h>156</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>210;100;10;10</additional_attributes></element></diagram>

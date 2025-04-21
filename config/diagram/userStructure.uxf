@@ -1,11 +1,12 @@
-<diagram program="umletino" version="15.1"><zoom_level>12</zoom_level><element><id>UMLClass</id><coordinates><x>548</x><y>180</y><w>252</w><h>108</h></coordinates><panel_attributes>UserModel
+<diagram program="umletino" version="15.1"><zoom_level>12</zoom_level><element><id>UMLClass</id><coordinates><x>564</x><y>192</y><w>372</w><h>108</h></coordinates><panel_attributes>UserModel
 --
-+ queryUserByPhoneNumber()
-+ addUser()
-+ generateToken()
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>80</x><y>192</y><w>252</w><h>96</h></coordinates><panel_attributes>UserController
++ queryUserByPhoneNumber(user: object): Promise
++ addUser(user: object): Promise
++ generateToken(user: object): string
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>108</x><y>192</y><w>384</w><h>96</h></coordinates><panel_attributes>UserController
 --
-+ login(): Response
-+ signup(): Response
++ login(req: Request, res: Response): Response
++ signup(req: Request, res: Response): Response
++ getUserInfo(req: Request, res: Response): Response
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>320</x><y>228</y><w>252</w><h>36</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>190;10;10;10</additional_attributes></element></diagram>
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>480</x><y>240</y><w>108</w><h>36</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>70;10;10;10</additional_attributes></element></diagram>

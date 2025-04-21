@@ -73,7 +73,7 @@ const optimizedARIMAModel = (data) => {
     return {
       params: v,
       func: predictionModel.ARIMAFunction(data, v.p, v.d, v.q).func,
-      n: dataProcessingModel.getPredictedX(data, 1), //n表示要被预测的值，根据data获得，第二个参数是时间序列预测特有，表示返回数量而不是数组
+      n: dataProcessingModel.getPredictedX(data, "arima"), //n表示要被预测的值，根据data获得，第二个参数是时间序列预测特有，表示返回数量而不是数组
       model: predictionModel.ARIMAFunction(data, v.p, v.d, v.q).model,
       data: data,
       fittedData: [],
@@ -279,31 +279,31 @@ const optimizedModel = async (data) => {
     Math.floor(data.length / 4)
   );
   let model;
-  // if (isAutocorelated) {
-  //   model = optimizedARIMAModel(data);
-  //   model.answer = "自相关性强，使用ARIMA模型";
-  // } else {
-  //   let islinear = dataProcessingModel.pearsonCorrelation(data);
-  //   if (islinear) {
-  //     model = optimizedPolynomialRegressionModel(data);
-  //     model.answer = "线性强，使用多项式回归模型";
-  //   } else {
-  //     if (data.length < 500) {
-  //       model = optimizedSVMModel(data);
-  //       model.answer = "数据少而非线性，使用支持向量回归模型";
-  //     } else {
-  //       model = await optimizedBPNetworkModel(data);
-  //       model.answer = "数据多而非线性，使用神经网络回归模型";
-  //       console.log("selectionModel中：", model);
-  //     }
-  //   }
-  // }
+  if (isAutocorelated) {
+    model = optimizedARIMAModel(data);
+    model.answer = "自相关性强，使用ARIMA模型";
+  } else {
+    let islinear = dataProcessingModel.pearsonCorrelation(data);
+    if (islinear) {
+      model = optimizedPolynomialRegressionModel(data);
+      model.answer = "线性强，使用多项式回归模型";
+    } else {
+      if (data.length < 500) {
+        model = optimizedSVMModel(data);
+        model.answer = "数据少而非线性，使用支持向量回归模型";
+      } else {
+        model = await optimizedBPNetworkModel(data);
+        model.answer = "数据多而非线性，使用神经网络回归模型";
+        console.log("selectionModel中：", model);
+      }
+    }
+  }
   // model = optimizedARIMAModel(data);
   // model.answer = "使用ARIMA模型";
   // model = optimizedPolynomialRegressionModel(data);
   // model.answer = "使用多项式回归模型";
-  model = optimizedSVMModel(data);
-  model.answer = "使用支持向量回归模型";
+  // model = optimizedSVMModel(data);
+  // model.answer = "使用支持向量回归模型";
   // model = await optimizedBPNetworkModel(data);
   // model.answer = "使用神经网络回归模型";
   return model;

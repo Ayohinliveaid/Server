@@ -1,30 +1,30 @@
-<diagram program="umletino" version="15.1"><zoom_level>11</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>100</x><y>323</y><w>550</w><h>440</h></coordinates><panel_attributes>DataProcessingModel
+<diagram program="umletino" version="15.1"><zoom_level>11</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>105</x><y>320</y><w>550</w><h>440</h></coordinates><panel_attributes>DataProcessingModel
 --
-+ simplifyObj(obj: Object): Object
-+ flattenObject(obj: Object, parentKey: string = ""): Object
-+ getKeys(obj: Object): Array
-+ getChildAndParent(str: String): Object
-+ DFS(obj: Object, key: String): Any
-+ BFS(obj: Object, key: String): Any
-+ search(obj: Object, key: string, parent: string = key)
-+ mappedData(data: Object,
++ simplifyObj(obj: object): object
++ flattenObject(obj: object, parentKey: string = ""): object
++ getKeys(obj: object): array
++ getChildAndParent(str: string): object
++ DFS(obj: object, key: string): any
++ BFS(obj: object, key: string): any
++ search(obj: object, key: string, parent: string = key): any
++ mappedData(data: array,
 x: string,y: string,
-z:string = null,
-xParent:string = x,
-yParent:string = y, 
-zParent:string = z): Array
-
-+ pearsonCorrelation(data: Object): boolean
-+ autocorrelation = (series: Array, lag: number): Number
-+ getChiSquaredCriticalValue(df: Number, alpha: Number): Number
-+ ljungBoxTest(data: Object, maxLag: number): boolean
-+ getPredictedX(data: Object, isARIMA: boolean = 0): number | number[]
-+ arrConcatenatedData(data: Array, arr: Array, n: number= null): Array
-+ normalizedTensor(arr: Array, min: number = null, max: number = null): Object
-+ normalizedObject(arr: Array, min: number  = null, max: number = null): Object
-+ denormalizedObject(normalizedObject: Object, min: number , max: number ): Array
-+ convertProps(data: Array): Object
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>89</x><y>114</y><w>462</w><h>165</h></coordinates><panel_attributes>PredictionController
+z: string = null,
+xParent: string = x,
+yParent: string = y, 
+zParent: string = z): array
++ pearsonCorrelation(data: array): boolean
++ autocorrelation = (series: array, lag: number): number
++ getChiSquaredCriticalValue(df: number, alpha: number): number
++ ljungBoxTest(data: array, maxLag: number): boolean
++ getPredictedX(data: array, type: string = '0'): number | array
++ arrConcatenatedData(data: array, arr: array, n: number= null): array
++ normalizedTensor(arr: array, min: number = null, max: number = null): object
++ normalizedObject(arr: array, min: number  = null, max: number = null): object
++ denormalizedObject(normalizedObject: object, min: number , max: number ): array
++ convertProps(data: array): object
++ preprocessedData(data: array): array
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>94</x><y>111</y><w>462</w><h>165</h></coordinates><panel_attributes>PredictionController
 --
 + linearRegressionPredict(req: Request, res: Response): Response
 + polynomialRegressionPredict(req: Request, res: Response): Response
@@ -32,14 +32,16 @@ zParent:string = z): Array
 + optimizedARIMAPredict(req: Request, res: Response): Response
 + SVMRegressionPredict(req: Request, res: Response): Response
 + optimizedPredict(req: Request, res: Response): Response
-+ BPNetworkPredict(req: Request, res: Response): Response</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>705</x><y>323</y><w>583</w><h>143</h></coordinates><panel_attributes>PredictionModel
++ BPNetworkPredict(req: Request, res: Response): Response</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>710</x><y>320</y><w>583</w><h>176</h></coordinates><panel_attributes>PredictionModel
 --
-+ linearRegressionFunction(data: Object): (x: number) =&gt; number
-+ polynomialRegressionFunction = (data: Array, degree: number): (inputArr: Array) =&gt; Array
-+ ARIMAFunction(data: Array, p:number = 4, d:number = 4, q:number = 2): Object
-+ SVMRegression(data: Object): Object
-+ BPNetworkFunction(data: Array, epochs:number = 4, d:hiddenUnits = 4, degree:number ):
-(inputArr: Array) =&gt; Array
++ linearRegressionFunction(data: object): (x: number) =&gt; number
++ polynomialRegressionFunction = (data: array, degree: number): (inputArr: array) =&gt; Array
++ ARIMAFunction(data: array, p:number = 4, d:number = 4, q:number = 2): object
++ SVMRegression(data: object, cost:number = 1, 
+epsilon:number = 0.0001, gamma:number = 10): object
++ BPNetworkFunction(data: array, unit:number = 200, 
+activation:string = "relu", batchSize:number = 8, epoch:number = 100):
+(inputArr: array) =&gt; array
 
 
 
@@ -47,16 +49,18 @@ zParent:string = z): Array
 
 
 
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>848</x><y>180</y><w>385</w><h>110</h></coordinates><panel_attributes>SelectionModel
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>853</x><y>177</y><w>385</w><h>110</h></coordinates><panel_attributes>SelectionModel
 --
-- optimizedPolynomialRegressionModel(data: Array): Object
-- optimizedARIMAModel = (data: Array): Object
-+ optimizedModel(data: Array): Object
-
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>584</x><y>4</y><w>594</w><h>132</h></coordinates><panel_attributes>EvaluationModel
+- optimizedPolynomialRegressionModel(data: array): object
+- optimizedARIMAModel = (data: array): object
+- optimizedSVMModel = (data: array): object
+- optimizedBPNetworkModel = (data: array): object
++ optimizedModel(data: array): object
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>589</x><y>1</y><w>594</w><h>132</h></coordinates><panel_attributes>EvaluationModel
 --
-- MSE(realData: Array, fittedData: Array): number
-- R2(realData: Array, fittedData: Array string = ""): number
-- underfittingDegree(realData: Array, fittedData: Array,  portion: number = 0.5): number
-- AIC(realData: Array, fittedData: Array,  k: number): number
-+ fittingDegree(realData: Array, fittedData: Array, k: number, portion: number = 0.5): number</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>540</x><y>268</y><w>187</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>150;50;11;10</additional_attributes></element><element><id>Relation</id><coordinates><x>540</x><y>224</y><w>330</w><h>44</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>280;20;11;10</additional_attributes></element><element><id>Relation</id><coordinates><x>540</x><y>125</y><w>231</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>190;10;11;50</additional_attributes></element><element><id>Relation</id><coordinates><x>518</x><y>268</y><w>77</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>50;50;11;10</additional_attributes></element><element><id>Relation</id><coordinates><x>639</x><y>334</y><w>88</w><h>44</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;60;20</additional_attributes></element><element><id>Relation</id><coordinates><x>727</x><y>279</y><w>143</w><h>66</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;40;110;10</additional_attributes></element><element><id>Relation</id><coordinates><x>782</x><y>125</y><w>88</w><h>121</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;60;90</additional_attributes></element><element><id>Relation</id><coordinates><x>606</x><y>257</y><w>264</w><h>88</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;60;220;10</additional_attributes></element></diagram>
+- MSE(realData: array, fittedData: array): number
+- R2(realData: array, fittedData: array string = ""): number
+- underfittingDegree(realData: array, fittedData: array,  portion: number = 0.5): number
+- AIC(realData: array, fittedData: array,  k: number): number
++ fittingDegree(realData: array, fittedData: array, k: number, portion: number = 0.5): number</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>545</x><y>265</y><w>187</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>150;50;11;10</additional_attributes></element><element><id>Relation</id><coordinates><x>545</x><y>221</y><w>330</w><h>44</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>280;20;11;10</additional_attributes></element><element><id>Relation</id><coordinates><x>545</x><y>122</y><w>231</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>190;10;11;50</additional_attributes></element><element><id>Relation</id><coordinates><x>523</x><y>265</y><w>77</w><h>77</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>50;50;11;10</additional_attributes></element><element><id>Relation</id><coordinates><x>644</x><y>331</y><w>88</w><h>44</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;60;20</additional_attributes></element><element><id>Relation</id><coordinates><x>732</x><y>276</y><w>143</w><h>66</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;40;110;10</additional_attributes></element><element><id>Relation</id><coordinates><x>787</x><y>122</y><w>88</w><h>121</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;60;90</additional_attributes></element><element><id>Relation</id><coordinates><x>611</x><y>254</y><w>264</w><h>88</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;60;220;10</additional_attributes></element></diagram>
