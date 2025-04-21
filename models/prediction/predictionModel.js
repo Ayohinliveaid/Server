@@ -156,17 +156,14 @@ const SVMRegression = (data, cost = 1, epsilon = 0.0001, gamma = 10) => {
 //反向传播机器学习模型，输入数据，返回预测函数
 const BPNetworkFunction = async (
   data,
-  epochs = 100,
-  hiddenUnits = 100,
-  degree = 3
+  unit = 200,
+  activation = "relu",
+  batchSize = 8,
+  epoch = 500
 ) => {
-  data = data.filter((v) => v.x != null && v.y != null);
   //对数据进行处理，转化为张量并归一化
   const xArr = data.map((v) => v.x);
   const yArr = data.map((v) => v.y);
-  // console.log("xArr:", xArr);
-
-  // const polyXArr = polynomialFeatures(xArr, degree); // 生成 x, x^2, x^3
 
   const {
     normalizedResult: normalizedInputs,
@@ -178,19 +175,20 @@ const BPNetworkFunction = async (
     min: outputMin,
     max: outputMax,
   } = dataProcessingModel.normalizedTensor(yArr);
+  // console.log("normalizedInputs", normalizedInputs.arraySync());
+  // console.log("normalizedOutputs", normalizedOutputs.arraySync());
 
-  // 创建 BP 神经网络模型
+  // 创建BP神经网络模型
   const model = tf.sequential();
   model.add(
     tf.layers.dense({
       inputShape: [xArr[0].length || 1],
-      // inputShape: [degree],
-      units: hiddenUnits,
-      activation: "tanh",
+      units: unit,
+      activation: activation,
     })
   );
-  model.add(tf.layers.dense({ units: hiddenUnits, activation: "tanh" }));
-  model.add(tf.layers.dense({ units: 1, activation: "sigmoid" })); // 线性回归任务，使用 linear 激活
+  model.add(tf.layers.dense({ units: unit, activation: activation }));
+  model.add(tf.layers.dense({ units: 1, activation: "linear" })); // 线性回归任务，使用 linear 激活
 
   // 编译模型
   model.compile({
@@ -199,8 +197,8 @@ const BPNetworkFunction = async (
   });
 
   await model.fit(normalizedInputs, normalizedOutputs, {
-    epochs: epochs,
-    batchSize: 8,
+    epochs: epoch,
+    batchSize: batchSize,
     shuffle: true,
     callbacks: {
       onEpochEnd: (epoch, logs) => {
@@ -229,13 +227,6 @@ const BPNetworkFunction = async (
 
   return func;
 };
-
-// //BP神经网络添加多项式回归
-// const polynomialFeatures = (xArr, degree) => {
-//   return xArr.map((x) => {
-//     return Array.from({ length: degree }, (_, i) => Math.pow(x, i + 1));
-//   });
-// };
 
 module.exports = {
   linearRegressionFunction,

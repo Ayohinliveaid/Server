@@ -363,7 +363,20 @@ const denormalizedObject = (normalizedObject, min, max) => {
 };
 
 //处理数据，将属性转化为xy，再转化回原属性值，以便在各个预测函数中使用xy预测，但最后返回原始数据
+//并加入数据预处理过程，剔除异常值
 const convertProps = (data) => {
+  //首先清洗数据，剔除null等异常值
+  data = data.filter((v) => {
+    const keys = Object.keys(v);
+    let hasNull = false;
+    keys.forEach((key) => {
+      if (v[key] == null) {
+        hasNull = true;
+      }
+    });
+    return !hasNull;
+  });
+
   let xProp, yProp;
   for (let i in data) {
     if (Object.keys(data[0])[0] && Object.keys(data[0])[1]) {

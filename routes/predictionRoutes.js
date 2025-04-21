@@ -55,6 +55,12 @@ predictionRouter.post(
 );
 
 predictionRouter.post(
+  "/optimizedBPNetworkPredict",
+  // userMiddlewares.authenticateToken,
+  predictionController.optimizedBPNetworkPredict
+);
+
+predictionRouter.post(
   "/optimizedPredict",
   // userMiddlewares.authenticateToken,
   predictionController.optimizedPredict

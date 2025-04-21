@@ -11,7 +11,7 @@ const SVM = require("libsvm-js/out/asm/libsvm");
 //optimizedPolynomialRegressionModel表示多项式回归最佳模型
 const optimizedPolynomialRegressionModel = (data) => {
   //首先调用测试模型中所有预测方法，生成相应的拟合数据，具体来说，是多项式回归的方法中，使用不同的方法作为项数
-  const degrees = [...Array(4)].map((v, i) => i + 1); //多项式回归，项数的范围
+  const degrees = [...Array(30)].map((v, i) => i + 1); //多项式回归，项数的范围
 
   //预测方法对象，包括多项式项数，具体的预测函数，原数据，生成的拟合数据，获得的分数，生成一个预测方法对象的数组，来保存
   const predictionModelList = degrees.map((v, i) => {
@@ -42,6 +42,7 @@ const optimizedPolynomialRegressionModel = (data) => {
       ? model
       : predictionModelList[i];
   });
+  console.log("optimizedPolynomialRegressionModel", bestPredictionModel);
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
 
@@ -112,9 +113,9 @@ const optimizedARIMAModel = (data) => {
 //SVM回归选择最佳参数
 const optimizedSVMModel = (data) => {
   //cost,epsilon,gamma的范围，生成参数列表
-  const costRange = [0.01, 0.1, 1, 10, 100, 1000];
-  const epsilonRange = [0.0001, 0.001, 0.01, 0.1, 0.2, 0.5];
-  const gammaRange = [0.001, 0.01, 0.1, 1, 10, 100];
+  const costRange = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
+  const epsilonRange = [0.00001, 0.0001, 0.001, 0.01, 0.1, 0.2, 0.5];
+  const gammaRange = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
   let paramList = [];
   for (let i = 0; i < costRange.length; i++) {
     for (let j = 0; j < epsilonRange.length; j++) {
@@ -170,7 +171,99 @@ const optimizedSVMModel = (data) => {
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
 
-//综合多项式回归选择最佳预测模型，输入数据，调用最佳参数的对应模型
+//最佳BP神经网络模型
+const optimizedBPNetworkModel = async (data, res) => {
+  //首先返回响应头
+  if (res) {
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+    });
+  }
+
+  //生成参数列表
+  const unitRange = [100, 200];
+  const activationRange = ["relu", "tanh"];
+  const batchSizeRange = [4, 8];
+  const epochRange = [400, 500];
+  let paramList = [];
+  for (let i = 0; i < unitRange.length; i++) {
+    for (let j = 0; j < activationRange.length; j++) {
+      for (let k = 0; k < batchSizeRange.length; k++) {
+        for (let l = 0; l < epochRange.length; l++) {
+          paramList.push({
+            unit: unitRange[i],
+            activation: activationRange[j],
+            batchSize: batchSizeRange[k],
+            epoch: epochRange[l],
+          });
+        }
+      }
+    }
+  }
+  console.log("paramList", paramList);
+  let i = 0;
+
+  //预测方法对象，包括多项式项数，具体的预测函数，原数据，生成的拟合数据，获得的分数，生成一个预测方法对象的数组，来保存
+  const BPNetworkModelList = await Promise.all(
+    paramList.map(async (v) => {
+      //显示当前进度
+      i++;
+      console.log("正在生成" + i + "个模型...");
+
+      const func = await predictionModel.BPNetworkFunction(
+        data,
+        v.unit,
+        v.activation,
+        v.batchSize,
+        v.epoch
+      );
+
+      const n = dataProcessingModel.getPredictedX(data);
+      const inputX = data.map((d) => d.x);
+      const predictedY = await func(inputX); // func 是异步预测函数
+
+      const fittedData = data.map((point, i) => ({
+        x: point.x,
+        y: predictedY[i],
+      }));
+
+      const complexity =
+        v.unit + Math.ceil(data.length / v.batchSize) + v.epoch;
+
+      const fittingDegree = evaluationModel.fittingDegree(
+        data,
+        fittedData,
+        complexity
+      );
+
+      //显示当前进度
+      console.log("已生成" + i + "个模型");
+      if (res) {
+        res.write(JSON.stringify({ answer: "已生成" + i + "个模型" }) + "\n");
+      }
+
+      return {
+        params: v,
+        func,
+        n,
+        data,
+        fittedData,
+        fittingDegree,
+      };
+    })
+  );
+
+  console.log("正在选择最优模型");
+
+  //选出最好的模型，目前仅仅从多项式回归选择，也就是仅仅选择多项式项数
+  const bestPredictionModel = BPNetworkModelList.reduce((model, v, i) => {
+    return model.fittingDegree > v.fittingDegree
+      ? model
+      : BPNetworkModelList[i];
+  });
+  console.log("optimizedBPNetworkModel", bestPredictionModel);
+  return bestPredictionModel; //此处返回预测模型，便于查看选择结果
+};
 
 const optimizedModel = async (data) => {
   //Ljung-box测试计算自相关性
@@ -180,55 +273,30 @@ const optimizedModel = async (data) => {
   );
   let model;
   if (isAutocorelated) {
-    // console.log("自相关性强，使用ARIMA模型");
     model = optimizedARIMAModel(data);
     model.answer = "自相关性强，使用ARIMA模型";
   } else {
     let islinear = dataProcessingModel.pearsonCorrelation(data);
     if (islinear) {
-      // console.log("线性强，使用多项式回归模型");
       model = optimizedPolynomialRegressionModel(data);
       model.answer = "线性强，使用多项式回归模型";
     } else {
-      if (data.length < 500) {
-        // console.log("哈哈，进入了data.length < 500的分支");
-        // console.log("数据少而非线性，使用支持向量回归模型");
-        // console.log("data", data);
+      if (data.length < 20) {
         model = optimizedSVMModel(data);
         model.answer = "数据少而非线性，使用支持向量回归模型";
       } else {
-        // console.log("数据多而非线性，使用神经网络回归模型");
-        model = {
-          // params: v,
-          func: await predictionModel.BPNetworkFunction(data),
-          n: dataProcessingModel.getPredictedX(data), //n表示要被预测的值，根据data获得
-          data: data,
-          // fittedData: [],
-          // fittingDegree: null,
-          answer: "数据多而非线性，使用神经网络回归模型",
-        };
+        model = optimizedBPNetworkModel(data);
+        model.answer = "数据多而非线性，使用神经网络回归模型";
       }
     }
   }
   return model;
 };
 
-// const data = [
-//   { x: 1, y: 105 },
-//   { x: 2, y: 107 },
-//   { x: 3, y: 110 },
-//   { x: 4, y: 108 },
-//   { x: 5, y: 115 },
-//   { x: 6, y: 120 },
-//   { x: 7, y: 118 },
-//   { x: 8, y: 125 },
-//   { x: 9, y: 130 },
-// ];
-// optimizedModel(data, 1); // 示例数据
-
 module.exports = {
   optimizedPolynomialRegressionModel,
   optimizedARIMAModel,
   optimizedSVMModel,
+  optimizedBPNetworkModel,
   optimizedModel,
 };

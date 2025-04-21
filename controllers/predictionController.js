@@ -165,9 +165,8 @@ const BPNetworkPredict = async (req, res) => {
     const convertProps = dataProcessingModel.convertProps(data);
     let xyData = convertProps.xy();
     let n = dataProcessingModel.getPredictedX(xyData);
-    console.log("n", n);
     // console.log("xyData", xyData);
-    const func = await predictionModel.BPNetworkFunction(xyData, 200, 100);
+    const func = await predictionModel.BPNetworkFunction(xyData);
     //返回和data的{x,y}相同的格式
     const predictedArr = await func(n);
     console.log("predictedArr", predictedArr);
@@ -176,10 +175,10 @@ const BPNetworkPredict = async (req, res) => {
       predictedArr,
       n
     );
-    console.log("newData", newData);
+    // console.log("newData", newData);
 
     const originData = convertProps.origin(newData);
-    return res.status(200).json(originData);
+    return res.status(200).json({ data: originData });
   }
 };
 
@@ -231,6 +230,32 @@ const optimizedSVMRegressionPredict = async (req, res) => {
   }
 };
 
+//最佳参数的支持向量回归
+const optimizedBPNetworkPredict = async (req, res) => {
+  const { data } = req.body; //n是要预测的数组，也就是x的数组
+  if (data.length === 0) {
+    return res.status(400).json("controller收到的参数存在非数组，引发错误");
+  } else {
+    const convertProps = dataProcessingModel.convertProps(data);
+    let xyData = convertProps.xy();
+    const n = dataProcessingModel.getPredictedX(xyData);
+    const optimizedBPNetworkModel =
+      await selectionModel.optimizedBPNetworkModel(xyData);
+    const func = optimizedBPNetworkModel.func;
+    const predictedArr = func(n);
+    const newData = dataProcessingModel.arrConcatenatedData(
+      xyData,
+      predictedArr,
+      n
+    );
+    const originData = convertProps.origin(newData);
+    return res.status(200).json({ data: originData });
+
+    // return res.status(200).json(optimizedBPNetworkModel);
+    // res.end(JSON.stringify({ optimizedBPNetworkModel }));
+  }
+};
+
 //综合模型预测
 const optimizedPredict = async (req, res) => {
   const { data } = req.body; //n是要预测的数组，也就是x的数组
@@ -277,5 +302,6 @@ module.exports = {
   BPNetworkPredict,
   SVMRegressionPredict,
   optimizedSVMRegressionPredict,
+  optimizedBPNetworkPredict,
   optimizedPredict,
 };
