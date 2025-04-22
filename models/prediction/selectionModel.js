@@ -11,7 +11,7 @@ const SVM = require("libsvm-js/out/asm/libsvm");
 //多项式回归最佳模型------------------------------------------------------------------------------------------------------------------------------
 const optimizedPolynomialRegressionModel = (data) => {
   //首先调用测试模型中所有预测方法，生成相应的拟合数据，具体来说，是多项式回归的方法中，使用不同的方法作为项数
-  const degrees = [...Array(30)].map((v, i) => i + 1); //多项式回归，项数的范围
+  const degrees = [...Array(3)].map((v, i) => i + 1); //多项式回归，项数的范围
 
   //预测方法对象，包括多项式项数，具体的预测函数，原数据，生成的拟合数据，获得的分数，生成一个预测方法对象的数组，来保存
   const predictionModelList = degrees.map((v, i) => {
@@ -73,7 +73,7 @@ const optimizedARIMAModel = (data) => {
     return {
       params: v,
       func: predictionModel.ARIMAFunction(data, v.p, v.d, v.q).func,
-      n: dataProcessingModel.getPredictedX(data, "arima"), //n表示要被预测的值，根据data获得，第二个参数是时间序列预测特有，表示返回数量而不是数组
+      n: dataProcessingModel.getPredictedX(data, "arima"), //n表示要被预测的值，根据data获得
       model: predictionModel.ARIMAFunction(data, v.p, v.d, v.q).model,
       data: data,
       fittedData: [],
@@ -114,6 +114,7 @@ const optimizedARIMAModel = (data) => {
   const bestPredictionModel = ARIMAModelList.reduce((model, v, i) => {
     return model.fittingDegree > v.fittingDegree ? model : ARIMAModelList[i];
   });
+  console.log("bestPredictionModel", bestPredictionModel);
 
   return bestPredictionModel; //此处返回预测模型，便于查看选择结果
 };
@@ -189,10 +190,10 @@ const optimizedBPNetworkModel = async (data, res) => {
   }
 
   //生成参数列表
-  const unitRange = [50, 200];
+  const unitRange = [200];
   const activationRange = ["relu", "tanh"];
   const batchSizeRange = [8];
-  const epochRange = [400, 600];
+  const epochRange = [800];
   let paramList = [];
   for (let i = 0; i < unitRange.length; i++) {
     for (let j = 0; j < activationRange.length; j++) {
@@ -298,6 +299,12 @@ const optimizedModel = async (data) => {
       }
     }
   }
+
+  // let isAutocorelated = dataProcessingModel.ljungBoxTest(
+  //   data,
+  //   Math.floor(data.length / 4)
+  // );
+  // let islinear = dataProcessingModel.pearsonCorrelation(data);
   // model = optimizedARIMAModel(data);
   // model.answer = "使用ARIMA模型";
   // model = optimizedPolynomialRegressionModel(data);

@@ -197,9 +197,9 @@ const pearsonCorrelation = (data) => {
   }
 
   const denominator = Math.sqrt(varianceX * varianceY);
-  const result = denominator === 0 ? 0 : numerator / denominator;
+  const result = denominator === 0 ? 1 : numerator / denominator;
+  console.log("linear correlation", result);
   if (Math.abs(result) > 0.7) {
-    console.log("linear correlation", result);
     return true;
   } else {
     return false;
