@@ -15,15 +15,15 @@ const paramList = [
     children: [
       {
         name: "forsale",
-        children: [null, { name: "search", children: [null] }],
+        children: [null, { name: "coordinates", children: [null] }],
       },
       {
         name: "forrent",
-        children: [null, { name: "search", children: [null] }],
+        children: [null, { name: "coordinates", children: [null] }],
       },
       {
         name: "forsole",
-        children: [null, { name: "search", children: [null] }],
+        children: [null, { name: "coordinates", children: [null] }],
       },
     ],
   },
