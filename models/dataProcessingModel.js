@@ -1,6 +1,9 @@
 //数据处理模型
 const jStat = require("jstat");
 const tf = require("@tensorflow/tfjs");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 //抽象出数据集的结构，首先简化数组，只保留第一个元素。使用广度优先算法。
 const simplifyObj = (obj) => {
   let simplifiedObj = JSON.parse(JSON.stringify(obj));
@@ -442,6 +445,19 @@ const preprocessedData = (data) => {
   return isofy(data);
 };
 
+//节约接口，将数据保存到本地
+const saveJSONToLocal = (data, filename = "data.json") => {
+  const desktopPath = "/Users/ZhengZhixiang/Desktop";
+  const fullPath = path.join(desktopPath, filename);
+
+  try {
+    fs.writeFileSync(fullPath, JSON.stringify(data, null, 2), "utf-8");
+    console.log(`✅ 文件已保存到：${fullPath}`);
+  } catch (err) {
+    console.error("❌ 保存文件失败：", err);
+  }
+};
+
 module.exports = {
   simplifyObj,
   getKeys,
@@ -461,4 +477,5 @@ module.exports = {
   denormalizedObject,
   convertProps,
   preprocessedData,
+  saveJSONToLocal,
 };

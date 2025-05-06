@@ -184,14 +184,33 @@ import dataProcessingModel from "./models/dataProcessingModel.js";
 
 // 测试预测的x的数组
 
-const data = [
-  { x: 1, y: 2 },
-  { x: 2, y: 3 },
-  { x: 3, y: 4 },
-  { x: 5, y: 4 },
-  { x: 4, y: 4 },
-  { x: 6, y: 4 },
-];
+// const data = [
+//   { x: 1, y: 2 },
+//   { x: 2, y: 3 },
+//   { x: 3, y: 4 },
+//   { x: 5, y: 4 },
+//   { x: 4, y: 4 },
+//   { x: 6, y: 4 },
+// ];
 
-const getPredictedX = dataProcessingModel.getPredictedX(data);
-console.log("getPredictedX", getPredictedX);
+// const getPredictedX = dataProcessingModel.getPredictedX(data);
+// console.log("getPredictedX", getPredictedX);
+
+//文件替换
+// 替换表达式并写入 index.scss (ESM 版)
+import { readFileSync, writeFileSync } from 'fs';
+
+// 直接指定绝对路径
+const filePath = '/Users/ZhengZhixiang/Desktop/index.scss';
+
+// 读取文件内容
+let content = readFileSync(filePath, 'utf-8');
+
+// 替换所有形式为 (a * b) * 1rpx 的表达式为计算后的值加 rpx
+const output = content.replace(/\(\s*(\d+)\s*\*\s*(\d+)\s*\)\s*\*\s*1rpx/g, (_, a, b) => {
+  return `${parseInt(a) * parseInt(b)}rpx`;
+});
+
+// 写入替换后的内容
+writeFileSync(filePath, output, 'utf-8');
+console.log('替换完成 ✅');

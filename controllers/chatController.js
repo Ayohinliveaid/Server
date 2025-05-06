@@ -102,6 +102,10 @@ const getResponse = async (req, res) => {
     // //构造房产API的路由并请求获得房产信息
     // const data = await propertyModel.requestRealtorAPI(config);
     const data = await propertyModel.requestLocalJSON(config); //节约API，暂时使用本地休斯顿出租房产数据
+
+    //将数据保存到本地桌面的realtorAPI文件夹中
+    dataProcessingModel.saveJSONToLocal(data, question);
+
     const properties = data.properties;
     res.write(
       JSON.stringify({

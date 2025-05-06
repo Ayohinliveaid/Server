@@ -8,7 +8,7 @@ const openai = new OpenAI({
   apiKey: "sk-63d7e4db1dd34c7d8480f75aaf92f9fb",
 });
 
-//表示参数的可选列表
+//表示数据API参数的结构
 const paramList = [
   {
     name: "search",
@@ -29,7 +29,22 @@ const paramList = [
   },
 ];
 //AI上下文
-
+//标注输出格式
+const standardConfig = {
+  path: "/search/forsale",
+  params: {
+    location: "houston ,tx",
+    search_radius: "0",
+  },
+};
+// {
+//   path: "/search/forsale/coordinates",
+//   params: {
+//     latitude: "29.270521",
+//     longitude: "-95.74991",
+//     radius: "30",
+//   },
+// },
 //定义AI状态码
 const stateCode = {
   1: "成功匹配",
@@ -48,19 +63,12 @@ const messageOfStateCode = [
     content:
       "to answer question provided later ,you have three state, each state has a correpondding code like following: " +
       JSON.stringify(stateCode) +
-      ",don't use code 2 and 3 arbitrarily. And you mush return json like this: " +
+      ",gave code 1 as possible as you can, don't use code 2 and 3 arbitrarily. And you mush return json like this: " +
       JSON.stringify(standardResponse) +
       ",even though answer part is '', no attribute can be emmited, put the answer of later questions or your explanation of the state in Chinese in the answer part",
   },
 ];
-//标注输出格式
-const standardConfig = {
-  path: "/search/forsale",
-  params: {
-    location: "houston ,tx",
-    search_radius: "0",
-  },
-};
+
 //标注输出格式
 const standardDimension = {
   x: "address.coordinates.lon",
@@ -71,9 +79,9 @@ const messagesOfConfig = [
   {
     role: "system",
     content:
-      "generate an api request config according the following question" +
+      "generate an api request config according to the following question" +
       JSON.stringify(paramList) +
-      ",you must return JSON object like this standard config as the answer part, no attribute can be emmited" +
+      ",you must return JSON object like this standard config as the answer part, no attribute in the JSON object can be removed or added" +
       JSON.stringify(standardConfig),
   },
 ];

@@ -11,7 +11,8 @@ const getCats = async (req, res) => {
 
 const getData = async (req, res) => {
   try {
-    const data = await propertyModel.requestRealtorAPI();
+    const { config } = req.body;
+    const data = await propertyModel.requestRealtorAPI(config);
     // const newData = data.properties.map((v, i) => {
     //   return {
     //     j: v.location.address.coordinate.lon,
