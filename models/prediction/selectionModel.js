@@ -274,6 +274,7 @@ const optimizedBPNetworkModel = async (data, res) => {
 };
 
 const optimizedModel = async (data) => {
+  ////自动选择模型
   //Ljung-box测试计算自相关性
   // let isAutocorelated = dataProcessingModel.ljungBoxTest(
   //   data,
@@ -320,11 +321,6 @@ const optimizedModel = async (data) => {
   //   }
   // }
 
-  let isAutocorelated = dataProcessingModel.ljungBoxTest(
-    data,
-    Math.floor(data.length / 4)
-  );
-  let islinear = dataProcessingModel.pearsonCorrelation(data);
   // //手动使用ARIMA模型
   // model = optimizedARIMAModel(data);
   // model.answer =
@@ -334,13 +330,13 @@ const optimizedModel = async (data) => {
   //   "\n" +
   //   JSON.stringify(model.fittingDegree);
   //// 手动使用多项式回归模型
-  // model = optimizedPolynomialRegressionModel(data);
-  // model.answer =
-  //   "手动使用多项式回归模型" +
-  //   "\n" +
-  //   JSON.stringify(model.params) +
-  //   "\n" +
-  //   JSON.stringify(model.fittingDegree);
+  model = optimizedPolynomialRegressionModel(data);
+  model.answer =
+    "手动使用多项式回归模型" +
+    "\n" +
+    JSON.stringify(model.params) +
+    "\n" +
+    JSON.stringify(model.fittingDegree);
   // //手动使用支持向量回归模型
   // model = optimizedSVMModel(data);
   // model.answer =
