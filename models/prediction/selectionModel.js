@@ -282,37 +282,37 @@ const optimizedModel = async (data) => {
   let model;
   if (isAutocorelated) {
     model = optimizedARIMAModel(data);
-    model.answer = "自相关性强，使用ARIMA模型";
+    model.answer =
+      "自相关性强，使用ARIMA模型" + "\n" + JSON.stringify(model.params);
     // +
-    // "\n" +
-    // JSON.stringify(model.params) +
     // "\n" +
     // JSON.stringify(model.fittingDegree);
   } else {
     let islinear = dataProcessingModel.pearsonCorrelation(data);
     if (islinear) {
       model = optimizedPolynomialRegressionModel(data);
-      model.answer = "线性强，使用多项式回归模型";
+      model.answer =
+        "线性强，使用多项式回归模型" + "\n" + JSON.stringify(model.params);
       // +
-      // "\n" +
-      // JSON.stringify(model.params) +
       // "\n" +
       // JSON.stringify(model.fittingDegree);
     } else {
       if (data.length < 500) {
         model = optimizedSVMModel(data);
-        model.answer = "数据少而非线性，使用支持向量回归模型";
+        model.answer =
+          "数据少而非线性，使用支持向量回归模型" +
+          "\n" +
+          JSON.stringify(model.params);
         // +
-        // "\n" +
-        // JSON.stringify(model.params) +
         // "\n" +
         // JSON.stringify(model.fittingDegree);
       } else {
         model = await optimizedBPNetworkModel(data);
-        model.answer = "数据多而非线性，使用神经网络回归模型";
+        model.answer =
+          "数据多而非线性，使用神经网络回归模型" +
+          "\n" +
+          JSON.stringify(model.params);
         // +
-        // "\n" +
-        // JSON.stringify(model.params) +
         // "\n" +
         // JSON.stringify(model.fittingDegree);
         console.log("selectionModel中：", model);
