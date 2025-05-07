@@ -11,7 +11,7 @@ const SVM = require("libsvm-js/out/asm/libsvm");
 //多项式回归最佳模型------------------------------------------------------------------------------------------------------------------------------
 const optimizedPolynomialRegressionModel = (data) => {
   //首先调用测试模型中所有预测方法，生成相应的拟合数据，具体来说，是多项式回归的方法中，使用不同的方法作为项数
-  const degrees = [...Array(20)].map((v, i) => i + 1); //多项式回归，项数的范围
+  const degrees = [...Array(5)].map((v, i) => i + 1); //多项式回归，项数的范围
 
   //预测方法对象，包括多项式项数，具体的预测函数，原数据，生成的拟合数据，获得的分数，生成一个预测方法对象的数组，来保存
   const predictionModelList = degrees.map((v, i) => {
@@ -275,50 +275,50 @@ const optimizedBPNetworkModel = async (data, res) => {
 
 const optimizedModel = async (data) => {
   ////自动选择模型
-  // let isAutocorelated = dataProcessingModel.ljungBoxTest(
-  //   data,
-  //   Math.floor(data.length / 4)
-  // );
-  // let model;
-  // if (isAutocorelated) {
-  //   model = optimizedARIMAModel(data);
-  //   model.answer =
-  //     "自相关性强，使用ARIMA模型" +
-  //     "\n" +
-  //     JSON.stringify(model.params) +
-  //     "\n" +
-  //     JSON.stringify(model.fittingDegree);
-  // } else {
-  //   let islinear = dataProcessingModel.pearsonCorrelation(data);
-  //   if (islinear) {
-  //     model = optimizedPolynomialRegressionModel(data);
-  //     model.answer =
-  //       "线性强，使用多项式回归模型" +
-  //       "\n" +
-  //       JSON.stringify(model.params) +
-  //       "\n" +
-  //       JSON.stringify(model.fittingDegree);
-  //   } else {
-  //     if (data.length < 500) {
-  //       model = optimizedSVMModel(data);
-  //       model.answer =
-  //         "数据少而非线性，使用支持向量回归模型" +
-  //         "\n" +
-  //         JSON.stringify(model.params) +
-  //         "\n" +
-  //         JSON.stringify(model.fittingDegree);
-  //     } else {
-  //       model = await optimizedBPNetworkModel(data);
-  //       model.answer =
-  //         "数据多而非线性，使用神经网络回归模型" +
-  //         "\n" +
-  //         JSON.stringify(model.params) +
-  //         "\n" +
-  //         JSON.stringify(model.fittingDegree);
-  //       console.log("selectionModel中：", model);
-  //     }
-  //   }
-  // }
+  let isAutocorelated = dataProcessingModel.ljungBoxTest(
+    data,
+    Math.floor(data.length / 4)
+  );
+  let model;
+  if (isAutocorelated) {
+    model = optimizedARIMAModel(data);
+    model.answer = "自相关性强，使用ARIMA模型";
+    // +
+    // "\n" +
+    // JSON.stringify(model.params) +
+    // "\n" +
+    // JSON.stringify(model.fittingDegree);
+  } else {
+    let islinear = dataProcessingModel.pearsonCorrelation(data);
+    if (islinear) {
+      model = optimizedPolynomialRegressionModel(data);
+      model.answer = "线性强，使用多项式回归模型";
+      // +
+      // "\n" +
+      // JSON.stringify(model.params) +
+      // "\n" +
+      // JSON.stringify(model.fittingDegree);
+    } else {
+      if (data.length < 500) {
+        model = optimizedSVMModel(data);
+        model.answer = "数据少而非线性，使用支持向量回归模型";
+        // +
+        // "\n" +
+        // JSON.stringify(model.params) +
+        // "\n" +
+        // JSON.stringify(model.fittingDegree);
+      } else {
+        model = await optimizedBPNetworkModel(data);
+        model.answer = "数据多而非线性，使用神经网络回归模型";
+        // +
+        // "\n" +
+        // JSON.stringify(model.params) +
+        // "\n" +
+        // JSON.stringify(model.fittingDegree);
+        console.log("selectionModel中：", model);
+      }
+    }
+  }
 
   // //手动使用ARIMA模型
   // model = optimizedARIMAModel(data);
@@ -345,13 +345,13 @@ const optimizedModel = async (data) => {
   //   "\n" +
   //   JSON.stringify(model.fittingDegree);
   // //手动使用神经网络回归模型
-  model = await optimizedBPNetworkModel(data);
-  model.answer =
-    "手动使用神经网络回归模型" +
-    "\n" +
-    JSON.stringify(model.params) +
-    "\n" +
-    JSON.stringify(model.fittingDegree);
+  // model = await optimizedBPNetworkModel(data);
+  // model.answer =
+  //   "手动使用神经网络回归模型" +
+  //   "\n" +
+  //   JSON.stringify(model.params) +
+  //   "\n" +
+  //   JSON.stringify(model.fittingDegree);
   return model;
 };
 

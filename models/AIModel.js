@@ -48,7 +48,7 @@ const standardConfig = {
 //定义AI状态码
 const stateCode = {
   1: "成功匹配",
-  2: "问题模糊，请详细提问",
+  2: "问题存在缺陷，或者根本不构成一个问题，需要详细提问",
   3: "问题详细，但是超出了当前的选择范围",
 };
 //标准回复
@@ -63,7 +63,8 @@ const messageOfStateCode = [
     content:
       "to answer question provided later ,you have three state, each state has a correpondding code like following: " +
       JSON.stringify(stateCode) +
-      ",gave code 1 as possible as you can, don't use code 2 and 3 arbitrarily. And you must return json like this: " +
+      // " . "+
+      ". Don't use code 2 and 3 arbitrarily, give code 1 as possible as you can, and you must return json like this: " +
       JSON.stringify(standardResponse) +
       ",no attribute should be omitted. Put the explanation of the stateCode (if stateCode is not 1) or standard answer of follow-up questions in Chinese (if stateCode is 1) in the 'answer' attribute",
   },

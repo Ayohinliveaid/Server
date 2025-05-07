@@ -14,7 +14,7 @@ const authenticateToken = (req, res, next) => {
       return res.status(403).json({ message: "无效的 Token" });
     }
     req.body.user = user; // 解析出的用户信息存入 req.user，供后续路由使用
-    console.log("middlewareUser", user);
+    // console.log("middlewareUser", user);
     next(); // 继续执行下一个中间件或路由
   });
 };
