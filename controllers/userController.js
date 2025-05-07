@@ -51,7 +51,7 @@ const getUserInfo = async (req, res) => {
   try {
     const { user } = req.body;
     const userInfo = await userModel.queryUserByPhoneNumber(user.phoneNumber);
-    console.log("getUserInfo's user", user);
+    // console.log("getUserInfo's user", user);
     return res.status(200).json({ userInfo });
   } catch (err) {
     return res.status(400).json({ err: err.message });
