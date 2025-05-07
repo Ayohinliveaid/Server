@@ -63,9 +63,9 @@ const messageOfStateCode = [
     content:
       "to answer question provided later ,you have three state, each state has a correpondding code like following: " +
       JSON.stringify(stateCode) +
-      ",gave code 1 as possible as you can, don't use code 2 and 3 arbitrarily. And you mush return json like this: " +
+      ",gave code 1 as possible as you can, don't use code 2 and 3 arbitrarily. And you must return json like this: " +
       JSON.stringify(standardResponse) +
-      ",even though answer part is '', no attribute can be emmited, put the answer of later questions or your explanation of the state in Chinese in the answer part",
+      ",no attribute should be omitted. Put the explanation of the stateCode (if stateCode is not 1) or standard answer of follow-up questions in Chinese (if stateCode is 1) in the 'answer' attribute",
   },
 ];
 
@@ -81,7 +81,7 @@ const messagesOfConfig = [
     content:
       "generate an api request config according to the following question" +
       JSON.stringify(paramList) +
-      ",you must return JSON object like this standard config as the answer part, no attribute in the JSON object can be removed or added" +
+      ",you must return JSON object like this standard config as the answer part, no attribute in the JSON object can be removed or added, and this configuration is applicable only within the United States" +
       JSON.stringify(standardConfig),
   },
 ];
@@ -120,6 +120,10 @@ const configFromDS = (text) => {
         },
       })
       .then((completion) => {
+        console.log(
+          "Raw AI Response:",
+          JSON.stringify(completion.choices[0].message.content)
+        ); // 先看看 AI 具体返回
         resolve(JSON.parse(completion.choices[0].message.content));
       })
       .catch((error) => {
