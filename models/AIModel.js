@@ -37,14 +37,7 @@ const standardConfig = {
     search_radius: "0",
   },
 };
-// {
-//   path: "/search/forsale/coordinates",
-//   params: {
-//     latitude: "29.270521",
-//     longitude: "-95.74991",
-//     radius: "30",
-//   },
-// },
+
 //定义AI状态码
 const stateCode = {
   1: "成功匹配",
